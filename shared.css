@@ -721,8 +721,15 @@ h2 {
 /*           two-snapshots/two-snapshots2.html                          */
 /*           two-snapshots/two-snapshots3.html                          */
 /*           1st_activity.html                                          */
-body { background: #E6E9F2; font-family: Inter, system-ui, sans-serif; color: #111; }
+body { background: transparent; font-family: Inter, system-ui, sans-serif; color: #111; }
 .page { width: 100%; margin: 0; padding: 0; }
+
+@media (prefers-color-scheme: dark) {
+  body { color: #e8e8e8; }
+  .section-title, .activity-title, .group-title, .page-title { color: #f0f0f0; }
+  .section-sub, .prose p, .page-sub, .activity-desc { color: #aaa; }
+  .section-tag, .act-progress, .module-meta { color: #777; }
+}
 
 /* ===== ACTIVITY PAGES — TEXT BLOCKS ================================= */
 /* Used by: two-snapshots/two-snapshots1.html                          */
