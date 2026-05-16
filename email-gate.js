@@ -4,8 +4,9 @@
   var KEY = 'oli_email';
 
   // ── Server endpoint ───────────────────────────────────────────────────────
-  // After deploying backend/Code.gs as a Google Apps Script web app,
-  // paste your deployment URL here:
+  // Paste your database API endpoint URL here when ready.
+  // register sends: POST { action: 'register', email: '...' }
+  // update sends:   POST { action: 'update', oldEmail: '...', email: '...' }
   var API_URL = '';
 
   // ── Helpers ───────────────────────────────────────────────────────────────
@@ -17,7 +18,6 @@
     if (!API_URL) return;
     fetch(API_URL, {
       method: 'POST',
-      mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     }).catch(function () {});
