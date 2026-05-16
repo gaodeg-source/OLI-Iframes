@@ -725,10 +725,7 @@ body { background: transparent; font-family: Inter, system-ui, sans-serif; color
 .page { width: 100%; margin: 0; padding: 0; }
 
 @media (prefers-color-scheme: dark) {
-  body { color: #e8e8e8; }
-  .section-title, .activity-title, .group-title, .page-title { color: #f0f0f0; }
-  .section-sub, .prose p, .page-sub, .activity-desc { color: #aaa; }
-  .section-tag, .act-progress, .module-meta { color: #777; }
+  body, body * { color: white !important; }
 }
 
 /* ===== ACTIVITY PAGES — TEXT BLOCKS ================================= */
