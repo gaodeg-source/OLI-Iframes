@@ -28,7 +28,7 @@
   style.textContent = [
     /* ---- email header bar ---- */
     '#oli-email-bar {',
-    '  width: 100%; background: white;',
+    '  width: 100%; background: transparent;',
     '  border-bottom: 1px solid #e2e8f0;',
     '  font-family: Inter, system-ui, sans-serif;',
     '  font-size: 13px; color: #555;',
