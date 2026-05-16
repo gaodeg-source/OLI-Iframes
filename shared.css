@@ -725,19 +725,12 @@ body { background: transparent; font-family: Inter, system-ui, sans-serif; color
 .page { width: 100%; margin: 0; padding: 0; }
 
 @media (prefers-color-scheme: dark) {
-  /* Activity content pages: text directly on background */
-  .text-block,
-  .text-block * { color: white !important; }
-  /* Course-level menu: outer labels/text (not inside cards) */
-  .course-page > .course-eyebrow,
-  .course-page > .course-title,
-  .course-page > .course-desc,
-  .course-page > .section-label { color: white !important; }
-  /* Module-level menu: outer labels/text (not inside cards) */
-  .menu-page > .back-link,
-  .menu-page > .module-label,
-  .menu-page > .module-title,
-  .menu-page > .module-desc { color: white !important; }
+  body, body * { color: white !important; }
+  /* Activity cards sit on white backgrounds — restore readable dark text */
+  .section-card * { color: #333 !important; }
+  .section-card .activity-tag { color: #00329d !important; }
+  .section-card .btn-outline { color: #555 !important; }
+  .section-card .act-progress { color: #888 !important; }
 }
 
 /* ===== ACTIVITY PAGES — TEXT BLOCKS ================================= */
