@@ -9,25 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../shared.css">
 <style>
-  html.micro-activity body { background: transparent; }
-  @media (prefers-color-scheme: dark) {
-    /* White-background card elements — restore readable dark text */
-    html.micro-activity .eq-compare *,
-    html.micro-activity .flip-card-front *,
-    html.micro-activity .flip-card-back *,
-    html.micro-activity .insight-box *,
-    html.micro-activity .org-card *,
-    html.micro-activity .de-card *,
-    html.micro-activity .reconcile-card *,
-    html.micro-activity .rabbit-hole-body * { color: #333 !important; }
-    /* Restore colored term labels inside eq cards */
-    html.micro-activity .eq-term.a { color: #0369a1 !important; }
-    html.micro-activity .eq-term.l { color: #1d4ed8 !important; }
-    html.micro-activity .eq-term.e { color: #1e3a8a !important; }
-    html.micro-activity .flip-card.a .def-title { color: #0369a1 !important; }
-    html.micro-activity .flip-card.l .def-title { color: #1d4ed8 !important; }
-    html.micro-activity .flip-card.e .def-title { color: #1e3a8a !important; }
-  }
+  html.micro-activity body { background: #e6e9f2; }
 
   /* Override headings to match iframe-testing: Inter, 700, #111 */
   h1 {
