@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Changed Between the Two Dates</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared.css">
+<style>
+.analogy-box {
+  background: #faf5ff; border: 1px solid #d8b4fe; border-radius: 10px;
+  padding: 16px 20px; margin: 16px 0;
+  font-size: 13px; color: #4c1d95; line-height: 1.75; font-style: italic;
+}
+.analogy-box cite { font-style: normal; font-weight: 600; }
+
+/* ================================================================
+   FLOW DIAGRAM
+================================================================ */
+.diagram-wrap { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 22px 16px 16px; margin: 20px 0; }
+.diagram { display: flex; align-items: stretch; gap: 0; min-height: 200px; }
+.pillar-wrap { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; width: 68px; }
+.pillar-label { font-size: 11px; font-weight: 700; color: #1e3461; text-align: center; margin-bottom: 8px; line-height: 1.35; }
+.pillar { flex: 1; width: 48px; background: #1e3461; border-radius: 5px; }
+.pillar-date { font-size: 11px; color: #777; margin-top: 8px; white-space: nowrap; }
+.flow-middle { flex: 1; display: flex; flex-direction: column; justify-content: space-around; gap: 9px; padding: 6px 0; }
+.flow-row { display: flex; align-items: center; }
+.flow-arrow { font-size: 16px; color: #3b6ec4; flex-shrink: 0; width: 26px; text-align: center; line-height: 1; }
+.flow-box { flex: 1; background: #eef4ff; border: 1.5px solid #93b4e8; border-radius: 8px; padding: 12px 16px; font-size: 13px; font-weight: 700; color: #1e3461; text-align: center; }
+
+/* ================================================================
+   ACTIVITY CARD CHROME
+================================================================ */
+/* ================================================================
+   ACTIVITY — MATCH THE QUESTION
+================================================================ */
+.match-q-list { display: flex; flex-direction: column; gap: 14px; }
+.match-q-label { font-size: 13px; font-weight: 600; color: #222; margin-bottom: 8px; line-height: 1.5; }
+.match-q-num { display: inline-block; background: #00329d; color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 11px; font-weight: 700; text-align: center; line-height: 20px; margin-right: 6px; }
+.match-opts { display: flex; gap: 8px; flex-wrap: wrap; }
+.match-opt { border: 1.5px solid #e2e8f0; border-radius: 7px; padding: 8px 14px; font-size: 12px; font-weight: 600; color: #444; cursor: pointer; background: white; transition: all 0.15s; white-space: nowrap; }
+.match-opt:hover:not(.locked) { border-color: #00329d; color: #00329d; }
+.match-opt.correct { border-color: #16a34a !important; background: #f0fdf4 !important; color: #14532d !important; }
+.match-opt.wrong   { border-color: #dc2626 !important; background: #fef2f2 !important; color: #991b1b !important; }
+.match-opt.locked  { cursor: default; }
+.match-q-feedback { font-size: 12px; color: #555; line-height: 1.6; margin-top: 7px; display: none; padding: 8px 12px; background: #f8fafc; border-radius: 6px; }
+.match-q-feedback.show { display: block; }
+.match-q-feedback.ok  { background: #f0fdf4; color: #166534; }
+.match-q-feedback.inf { background: #eff6ff; color: #1e3a5f; }
+
+/* ================================================================
+   DRAG AND DROP
+================================================================ */
+.dnd-bank-wrap { background: #f8fafc; border: 1.5px dashed #d1d5db; border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; transition: border-color 0.15s, background 0.15s; }
+.dnd-bank-wrap.drag-over { border-color: #94a3b8; background: #f1f5f9; }
+.dnd-bank-label { font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+.dnd-bank { display: flex; flex-wrap: wrap; gap: 8px; min-height: 36px; }
+.dnd-zones { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+.dnd-zone { border: 2px dashed #d1d5db; border-radius: 10px; padding: 14px; min-height: 130px; transition: border-color 0.15s, background 0.15s; }
+.dnd-zone.drag-over { border-color: #00329d; background: #eff6ff; }
+.dnd-zone-label { font-size: 12px; font-weight: 700; color: #374151; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #e2e8f0; line-height: 1.4; }
+.dnd-zone-items { display: flex; flex-wrap: wrap; gap: 7px; min-height: 28px; }
+.dnd-zone-empty { font-size: 12px; color: #bbb; font-style: italic; }
+.dnd-item { padding: 7px 12px; background: white; border: 1.5px solid #d1d5db; border-radius: 8px; font-size: 12px; font-weight: 500; color: #333; cursor: grab; user-select: none; transition: all 0.15s; line-height: 1.4; }
+.dnd-item:hover:not(.checked) { border-color: #00329d; color: #00329d; background: #eff6ff; }
+.dnd-item.dragging { opacity: 0.35; }
+.dnd-item.correct  { border-color: #16a34a !important; background: #f0fdf4 !important; color: #14532d !important; }
+.dnd-item.wrong    { border-color: #dc2626 !important; background: #fef2f2 !important; color: #991b1b !important; }
+#dndFeedbackList { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+.dnd-fb-card { background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 11px 14px; font-size: 13px; color: #78350f; line-height: 1.65; }
+.dnd-fb-label { display: block; font-weight: 700; margin-bottom: 4px; color: #92400e; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ============================================================
+       SECTION 2 — WHAT CHANGED
+  ============================================================ -->
+  <div class="text-block">
+    <div class="section-tag"></div>
+    <h2 class="section-title">What Changed Between the Two Dates</h2>
+    <p class="section-sub">The flow statements explain the difference between the two balance sheets.</p>
+    <div class="prose">
+      <p>Now compare the two balance sheets. Assets are different. Liabilities are different. Equities are different. The entity operated for a year — it sold goods, paid employees, borrowed money, bought equipment, collected receivables, paid suppliers. All of that activity is now embedded in the difference between the two snapshots.</p>
+      <p>The flow statements decompose the difference between the two balance sheets. Each one explains a different aspect of what changed.</p>
+    </div>
+
+    <div class="diagram-wrap">
+      <div class="diagram">
+        <div class="pillar-wrap">
+          <div class="pillar-label">Balance<br>Sheet</div>
+          <div class="pillar"></div>
+          <div class="pillar-date">Dec 31, 2024</div>
+        </div>
+        <div class="flow-middle">
+          <div class="flow-row">
+            <div class="flow-arrow">&#8594;</div>
+            <div class="flow-box">Income Statement</div>
+            <div class="flow-arrow">&#8594;</div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-arrow">&#8594;</div>
+            <div class="flow-box">Cash Flow Statement</div>
+            <div class="flow-arrow">&#8594;</div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-arrow">&#8594;</div>
+            <div class="flow-box">Statement of Changes in Equities</div>
+            <div class="flow-arrow">&#8594;</div>
+          </div>
+        </div>
+        <div class="pillar-wrap">
+          <div class="pillar-label">Balance<br>Sheet</div>
+          <div class="pillar"></div>
+          <div class="pillar-date">Dec 31, 2025</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       ACTIVITY — WHICH STATEMENT EXPLAINS THE CHANGE?
+  ============================================================ -->
+  <div class="section-card activity-card">
+    <div class="activity-tag">&#10003; Activity 1 of 2</div>
+    <div class="activity-title">Which Statement Explains the Change?</div>
+    <div class="activity-desc">Select the flow statement that best answers each prompt.</div>
+    <div class="match-q-list" id="matchList"></div>
+    <div class="act-footer">
+      <span class="act-progress" id="act2Progress">0 of 3 answered</span>
+      <button class="btn btn-outline" onclick="resetMatch()">Reset</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SECTION 3 — THE LIMITS
+  ============================================================ -->
+  <div class="text-block">
+    <div class="section-tag"></div>
+    <h2 class="section-title">The Limits of the Balance Sheet</h2>
+    <div class="prose">
+      <p>But the snapshots alone do not tell you what happened. They show the position at two dates — they do not show the path between them.</p>
+    </div>
+    <div class="analogy-box">
+      A patient's blood pressure at their January checkup and their July checkup tells you something changed. It does not tell you whether they exercised, changed their diet, started medication, or experienced a medical event. <cite>The two readings frame the question. They do not provide the explanation.</cite>
+    </div>
+    <div class="prose" style="margin-top:16px;">
+      <p>This is the limitation of the balance sheet: it captures position but not activity. It tells you where the entity stands, not how it got there. And for most of the people who rely on the system — investors, lenders, managers, regulators — the "how" matters as much as the "where."</p>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       ACTIVITY — DRAG AND DROP
+  ============================================================ -->
+  <div class="section-card activity-card">
+    <div class="activity-tag">&#10003; Activity 2 of 2</div>
+    <div class="activity-title">What Can the Snapshots Tell You?</div>
+    <div class="activity-desc">Drag each statement into the correct zone. Some things can be read directly by comparing two balance sheets — others require a flow statement to know.</div>
+
+    <div class="dnd-bank-wrap" id="dndBankWrap"
+         ondragover="dndBankOver(event)" ondrop="dndDropPool(event)" ondragleave="dndBankLeave(event)">
+      <div class="dnd-bank-label">Statements — drag to a zone below</div>
+      <div class="dnd-bank" id="dndBank"></div>
+    </div>
+
+    <div class="dnd-zones">
+      <div class="dnd-zone" id="zone-can-wrap"
+           ondragover="dndOver(event)" ondrop="dndDrop(event,'can')" ondragleave="dndLeave(event)">
+        <div class="dnd-zone-label">Can be determined from the snapshots</div>
+        <div class="dnd-zone-items" id="zoneCan"></div>
+      </div>
+      <div class="dnd-zone" id="zone-cannot-wrap"
+           ondragover="dndOver(event)" ondrop="dndDrop(event,'cannot')" ondragleave="dndLeave(event)">
+        <div class="dnd-zone-label">Cannot be determined from the snapshots alone</div>
+        <div class="dnd-zone-items" id="zoneCannot"></div>
+      </div>
+    </div>
+
+    <div id="dndFeedbackList"></div>
+
+    <div class="act-footer">
+      <span class="act-progress" id="dndProgress">0 of 6 placed</span>
+      <button class="btn btn-outline" onclick="resetDnd()">Reset</button>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+/* ================================================================
+   ACTIVITY — MATCH THE QUESTION
+================================================================ */
+var MATCH_QS = [
+  {
+    q: 'Why cash changed during the year',
+    opts: ['Income Statement', 'Cash Flow Statement', 'Statement of Changes in Equities'],
+    correct: 1,
+    hint: 'The Cash Flow Statement tracks every inflow and outflow, grouped by operating, investing, and financing activity.'
+  },
+  {
+    q: 'Profit or loss for the year',
+    opts: ['Income Statement', 'Cash Flow Statement', 'Statement of Changes in Equities'],
+    correct: 0,
+    hint: 'Revenue minus expenses equals net income — that\'s the Income Statement\'s core story.'
+  },
+  {
+    q: 'Changes in equity beyond profit alone',
+    opts: ['Income Statement', 'Cash Flow Statement', 'Statement of Changes in Equities'],
+    correct: 2,
+    hint: 'Equity changes through profits, dividends, and share issuances. The Statement of Changes in Equities tracks all of it.'
+  }
+];
+
+var matchAnswers = new Array(MATCH_QS.length).fill(null);
+
+function renderMatch() {
+  var list = document.getElementById('matchList');
+  list.innerHTML = '';
+  var answered = 0;
+  MATCH_QS.forEach(function(mq, qi) {
+    var ans = matchAnswers[qi];
+    if (ans !== null) answered++;
+    var item = document.createElement('div');
+    item.className = 'match-q-item';
+    var label = document.createElement('div');
+    label.className = 'match-q-label';
+    label.innerHTML = '<span class="match-q-num">' + (qi+1) + '</span>' + mq.q;
+    var opts = document.createElement('div');
+    opts.className = 'match-opts';
+    mq.opts.forEach(function(opt, oi) {
+      var b = document.createElement('div');
+      b.className = 'match-opt';
+      b.textContent = opt;
+      if (ans !== null) {
+        b.classList.add('locked');
+        if (oi === ans && oi === mq.correct) b.classList.add('correct');
+        else if (oi === ans && oi !== mq.correct) b.classList.add('wrong');
+        else if (oi === mq.correct) b.classList.add('correct');
+      } else {
+        (function(o){ b.addEventListener('click', function() { matchAnswers[qi] = o; renderMatch(); }); })(oi);
+      }
+      opts.appendChild(b);
+    });
+    var fb = document.createElement('div');
+    fb.className = 'match-q-feedback';
+    if (ans !== null) {
+      fb.classList.add('show');
+      fb.classList.add(ans === mq.correct ? 'ok' : 'inf');
+      fb.textContent = (ans === mq.correct ? '✓ ' : 'Not quite — ') + mq.hint;
+    }
+    item.appendChild(label); item.appendChild(opts); item.appendChild(fb);
+    list.appendChild(item);
+  });
+  var prog = document.getElementById('act2Progress');
+  prog.textContent = answered + ' of ' + MATCH_QS.length + ' answered';
+  if (answered === MATCH_QS.length) prog.style.color = '#16a34a';
+}
+
+function resetMatch() {
+  matchAnswers = new Array(MATCH_QS.length).fill(null);
+  document.getElementById('act2Progress').style.color = '';
+  renderMatch();
+}
+renderMatch();
+
+/* ================================================================
+   ACTIVITY — DRAG AND DROP
+================================================================ */
+var DND_ITEMS = [
+  { id: 'dnd1', text: 'Cash was higher on Dec 31, 2025 than on Dec 31, 2024.', zone: 'can',
+    feedback: 'This can be determined from the snapshots because cash is a balance sheet item. By comparing the cash balances on the two dates, you can tell whether cash was higher at year-end.' },
+  { id: 'dnd2', text: 'Liabilities changed between the two dates.', zone: 'can',
+    feedback: 'This can be determined from the snapshots because liabilities appear on both balance sheets. Comparing the two dates tells you that the balance changed, even if it does not explain why.' },
+  { id: 'dnd3', text: 'Equity increased between the two dates.', zone: 'can',
+    feedback: 'This can be determined from the snapshots because equity is reported on both balance sheets. If the ending equity is higher than the beginning equity, the snapshots show that increase, but not what caused it.' },
+  { id: 'dnd4', text: 'The company borrowed money during the year.', zone: 'cannot',
+    feedback: 'This cannot be determined from the snapshots alone. A change in liabilities or cash might be caused by borrowing, but the balance sheets do not tell you which event produced the change.' },
+  { id: 'dnd5', text: 'The company earned a profit during the year.', zone: 'cannot',
+    feedback: 'This cannot be determined from the snapshots alone. Profit is reported by the Income Statement, not directly by the balance sheet, and changes in equity do not tell you by themselves whether profit was the cause.' },
+  { id: 'dnd6', text: 'The company purchased equipment during the year.', zone: 'cannot',
+    feedback: 'This cannot be determined from the snapshots alone. The balance sheets may show a different equipment balance, but they do not reveal whether the change came from a purchase, depreciation, disposal, or another event.' }
+];
+
+for (var _i = DND_ITEMS.length - 1; _i > 0; _i--) {
+  var _j = Math.floor(Math.random() * (_i + 1));
+  var _tmp = DND_ITEMS[_i]; DND_ITEMS[_i] = DND_ITEMS[_j]; DND_ITEMS[_j] = _tmp;
+}
+
+var dndPlacement = {};
+DND_ITEMS.forEach(function(item) { dndPlacement[item.id] = 'pool'; });
+var dndDragging = null;
+
+function renderDnd() {
+  var bank = document.getElementById('dndBank');
+  var zoneCan = document.getElementById('zoneCan');
+  var zoneCannot = document.getElementById('zoneCannot');
+  bank.innerHTML = ''; zoneCan.innerHTML = ''; zoneCannot.innerHTML = '';
+  DND_ITEMS.forEach(function(item) {
+    var placement = dndPlacement[item.id];
+    var el = makeDndEl(item);
+    if (placement === 'pool') bank.appendChild(el);
+    else if (placement === 'can') zoneCan.appendChild(el);
+    else zoneCannot.appendChild(el);
+  });
+  if (!zoneCan.children.length)    zoneCan.innerHTML    = '<span class="dnd-zone-empty">Drop items here</span>';
+  if (!zoneCannot.children.length) zoneCannot.innerHTML = '<span class="dnd-zone-empty">Drop items here</span>';
+  var correct = DND_ITEMS.filter(function(i) { return dndPlacement[i.id] !== 'pool' && dndPlacement[i.id] === i.zone; }).length;
+  var placed  = DND_ITEMS.filter(function(i) { return dndPlacement[i.id] !== 'pool'; }).length;
+  var prog = document.getElementById('dndProgress');
+  if (placed === 0) { prog.textContent = '0 of 6 placed'; prog.style.color = ''; }
+  else if (correct === 6) { prog.textContent = 'All 6 correct ✓'; prog.style.color = '#16a34a'; }
+  else { prog.textContent = correct + ' of 6 correct'; prog.style.color = correct > 0 ? '#b45309' : ''; }
+  renderDndFeedback();
+}
+
+function makeDndEl(item) {
+  var placement = dndPlacement[item.id];
+  var el = document.createElement('div');
+  el.className = 'dnd-item';
+  el.textContent = item.text;
+  el.dataset.id = item.id;
+  if (placement !== 'pool') el.classList.add(placement === item.zone ? 'correct' : 'wrong');
+  el.setAttribute('draggable', 'true');
+  el.addEventListener('dragstart', function(e) {
+    dndDragging = item.id; e.dataTransfer.effectAllowed = 'move';
+    setTimeout(function() { el.classList.add('dragging'); }, 0);
+  });
+  el.addEventListener('dragend', function() { el.classList.remove('dragging'); dndDragging = null; });
+  return el;
+}
+
+function renderDndFeedback() {
+  var list = document.getElementById('dndFeedbackList');
+  list.innerHTML = '';
+  DND_ITEMS.forEach(function(item) {
+    var placement = dndPlacement[item.id];
+    if (placement !== 'pool' && placement !== item.zone) {
+      var card = document.createElement('div');
+      card.className = 'dnd-fb-card';
+      card.innerHTML = '<span class="dnd-fb-label">' + item.text + '</span>' + item.feedback;
+      list.appendChild(card);
+    }
+  });
+}
+
+function dndOver(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+function dndLeave(e) { e.currentTarget.classList.remove('drag-over'); }
+function dndDrop(e, zone) {
+  e.preventDefault(); e.currentTarget.classList.remove('drag-over');
+  if (dndDragging) { dndPlacement[dndDragging] = zone; dndDragging = null; renderDnd(); }
+}
+function dndBankOver(e) { e.preventDefault(); document.getElementById('dndBankWrap').classList.add('drag-over'); }
+function dndBankLeave(e) { document.getElementById('dndBankWrap').classList.remove('drag-over'); }
+function dndDropPool(e) {
+  e.preventDefault(); document.getElementById('dndBankWrap').classList.remove('drag-over');
+  if (dndDragging) { dndPlacement[dndDragging] = 'pool'; dndDragging = null; renderDnd(); }
+}
+function resetDnd() { DND_ITEMS.forEach(function(i) { dndPlacement[i.id] = 'pool'; }); renderDnd(); }
+
+renderDnd();
+</script>
+</body>
+</html>
