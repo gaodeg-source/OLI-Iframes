@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Balance Sheet Identity — Activity 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Open+Sans:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared.css">
+<script src="../email-gate.js"></script>
+<style>
+body {
+  min-height: 100vh;
+  width: 100%;
+}
+
+.page {
+  width: 100%;
+  padding: 36px clamp(16px, 5vw, 60px) 80px;
+}
+
+/* ── Page header ──────────────────────────────────── */
+.page-title { font-size: clamp(22px, 3vw, 28px); font-weight: 700; margin-bottom: 4px; font-family: 'Inter', sans-serif; }
+.page-sub   { font-size: clamp(14px, 1.7vw, 16px); color: #666; margin-bottom: 28px; }
+
+/* ── Progress dots ────────────────────────────────── */
+.progress-row { display: flex; align-items: center; gap: 8px; margin-bottom: 36px; flex-wrap: wrap; }
+.prog-dot { width: 10px; height: 10px; border-radius: 50%; background: #c5c8d4; transition: background 0.25s; flex-shrink: 0; }
+.prog-dot.active { background: #00329d; }
+.prog-dot.done   { background: #16a34a; }
+.prog-label      { font-size: 13px; color: #888; margin-left: 4px; }
+
+/* ── Screens ──────────────────────────────────────── */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ── Step header (no card) ────────────────────────── */
+.step-header { margin-bottom: 24px; }
+.step-tag   { font-size: 12px; font-weight: 700; color: #888; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 6px; }
+.step-title { font-size: clamp(19px, 2.3vw, 23px); font-weight: 700; color: #111; margin-bottom: 6px; }
+.step-desc  { font-size: clamp(14px, 1.6vw, 16px); color: #555; line-height: 1.65; }
+
+/* ── Two-column layout ────────────────────────────── */
+.bs-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(20px, 4vw, 56px);
+  margin-bottom: 28px;
+  width: 100%;
+}
+
+.bs-column { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+
+.bs-col-label {
+  font-size: clamp(13px, 1.5vw, 15px); font-weight: 700;
+  color: #374151; margin-bottom: 6px;
+}
+
+/* ── Outer box per BS column ──────────────────────── */
+.bs-col-box {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: clamp(14px, 2vw, 22px);
+  width: 100%;
+}
+
+/* ── Sections inside the box ──────────────────────── */
+.bs-section { padding: 14px 0; }
+.bs-section:first-child { padding-top: 0; }
+.bs-section:last-child  { padding-bottom: 0; }
+.bs-section + .bs-section {
+  border-top: 1.5px solid #9ca3af;
+  margin-left: -10px;
+  margin-right: -10px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.bs-section-title {
+  font-size: 12px; font-weight: 700;
+  color: #00329d; letter-spacing: 0.8px;
+  text-transform: uppercase; margin-bottom: 10px;
+}
+
+/* ── Line items ───────────────────────────────────── */
+.bs-item {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 4px 0; font-size: clamp(13px, 1.5vw, 15px);
+}
+
+.item-label { color: #374151; padding-right: 8px; }
+.item-value {
+  font-variant-numeric: tabular-nums;
+  font-weight: 500; color: #111; white-space: nowrap;
+  /* Fixed padding matches .hl so row height never shifts */
+  padding: 1px 7px;
+  border-radius: 4px;
+}
+
+/* Highlighted changed value — only visible when .hint-active is on the grid */
+.hint-active .item-value.hl {
+  background: #dbeafe; color: #1d4ed8;
+  font-weight: 700;
+}
+
+/* Total row */
+.bs-item.total-row {
+  border-top: 1px solid #d1d5db;
+  margin-top: 4px; padding-top: 8px;
+}
+.bs-item.total-row .item-label { font-weight: 700; color: #111; }
+.bs-item.total-row .item-value { font-weight: 700; }
+
+/* ── Delta summary (screen 5) ─────────────────────── */
+.delta-box {
+  background: white; border: 1px solid #e5e7eb;
+  border-radius: 12px; padding: clamp(14px, 2vw, 22px);
+  margin-bottom: 24px; width: 100%;
+}
+.delta-box-label {
+  font-size: 12px; font-weight: 700; color: #00329d;
+  letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 14px;
+}
+.delta-row {
+  display: flex; align-items: baseline; gap: 10px;
+  font-size: clamp(14px, 1.6vw, 16px);
+  padding: 7px 0; border-bottom: 1px solid #f3f4f6; flex-wrap: wrap;
+}
+.delta-row:last-child { border-bottom: none; }
+.delta-name   { color: #374151; font-weight: 600; flex: 1; min-width: 120px; }
+.delta-calc   { color: #888; font-variant-numeric: tabular-nums; font-size: clamp(13px, 1.4vw, 15px); }
+.delta-result {
+  background: #dbeafe; color: #1d4ed8;
+  border-radius: 4px; padding: 1px 8px;
+  font-weight: 700; font-variant-numeric: tabular-nums;
+}
+
+/* ── Multiple choice card ─────────────────────────── */
+.mc-card {
+  background: white; border-radius: 12px;
+  padding: clamp(16px, 2.5vw, 26px);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  width: 100%;
+}
+.mc-q-row {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 12px; margin-bottom: 16px;
+}
+.mc-q {
+  font-size: clamp(15px, 1.8vw, 17px); font-weight: 600;
+  color: #111; line-height: 1.5; flex: 1; margin-bottom: 16px;
+}
+.mc-q-row .mc-q { margin-bottom: 0; }
+.mc-opts { display: flex; flex-direction: column; gap: 9px; margin-bottom: 18px; }
+
+.mc-opt {
+  border: 1.5px solid #e2e8f0; border-radius: 8px;
+  padding: clamp(10px, 1.5vw, 13px) clamp(12px, 1.8vw, 16px);
+  cursor: pointer; font-size: clamp(14px, 1.6vw, 15px);
+  font-weight: 500; color: #333;
+  display: flex; align-items: center; gap: 10px;
+  transition: border-color 0.15s, background 0.15s;
+  user-select: none;
+}
+.mc-opt:hover:not(.locked) { border-color: #94a3b8; background: #f8fafc; }
+.mc-opt.selected { border-color: #00329d; background: #eff6ff; color: #1d4ed8; }
+.mc-opt.correct  { border-color: #16a34a !important; background: #f0fdf4 !important; color: #14532d !important; pointer-events: none; }
+.mc-opt.wrong    { border-color: #dc2626 !important; background: #fef2f2 !important; color: #991b1b !important; }
+.mc-opt.locked   { cursor: default; pointer-events: none; }
+
+.mc-letter {
+  width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0;
+  border: 1.5px solid #c5c8d4; font-size: 13px; font-weight: 700; color: #888;
+  display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+}
+.mc-opt.selected .mc-letter { background: #00329d; border-color: #00329d; color: white; }
+.mc-opt.correct  .mc-letter { background: #16a34a; border-color: #16a34a; color: white; }
+.mc-opt.wrong    .mc-letter { background: #dc2626; border-color: #dc2626; color: white; }
+
+/* ── Feedback ─────────────────────────────────────── */
+.feedback {
+  border-radius: 8px; padding: 12px 16px;
+  font-size: clamp(14px, 1.6vw, 15px); line-height: 1.75;
+  display: none; margin-bottom: 16px;
+}
+.feedback.show { display: block; }
+.feedback.ok  { background: #f0fdf4; color: #14532d; border: 1px solid #86efac; }
+.feedback.err { background: #fef2f2; color: #7f1d1d; border: 1px solid #fca5a5; }
+
+/* ── Buttons ──────────────────────────────────────── */
+.nav-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+.btn-back {
+  background: white; color: #555; border: 1.5px solid #d1d5db;
+  border-radius: 6px; padding: 10px 20px;
+  font-family: 'Inter', sans-serif; font-size: clamp(14px, 1.5vw, 15px); font-weight: 600;
+  cursor: pointer; transition: border-color 0.15s, color 0.15s;
+}
+.btn-back:hover { border-color: #00329d; color: #00329d; }
+
+.btn-check {
+  background: #00329d; color: white; border: none;
+  border-radius: 6px; padding: 10px 22px;
+  font-family: 'Inter', sans-serif; font-size: clamp(14px, 1.5vw, 15px); font-weight: 600;
+  cursor: pointer; transition: background 0.15s; display: none;
+}
+.btn-check:hover  { background: #1a4db5; }
+.btn-check.show   { display: inline-block; }
+
+.btn-next {
+  background: #16a34a; color: white; border: none;
+  border-radius: 6px; padding: 10px 22px;
+  font-family: 'Inter', sans-serif; font-size: clamp(14px, 1.5vw, 15px); font-weight: 600;
+  cursor: pointer; transition: background 0.15s; display: none;
+}
+.btn-next:hover { background: #15803d; }
+.btn-next.show  { display: inline-block; }
+
+.next-page-hint {
+  font-size: clamp(15px, 1.6vw, 17px); font-weight: 600; color: #1d4ed8; display: none;
+}
+.next-page-hint.show { display: inline-block; }
+
+.btn-hint {
+  background: #eff6ff; color: #1d4ed8; border: 1.5px solid #bfdbfe;
+  border-radius: 6px; padding: 7px 16px;
+  font-family: 'Inter', sans-serif; font-size: clamp(13px, 1.4vw, 14px); font-weight: 600;
+  cursor: pointer; transition: background 0.15s, border-color 0.15s; white-space: nowrap;
+}
+.btn-hint:hover { background: #dbeafe; border-color: #93c5fd; }
+
+/* ── Responsive ───────────────────────────────────── */
+@media (max-width: 600px) {
+  .bs-two-col { grid-template-columns: 1fr; gap: 20px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1 class="page-title">The Balance Sheet</h1>
+  <p class="page-sub">Activity 1 &mdash; Learning to read and compare balance sheets</p>
+
+  <div class="progress-row">
+    <div class="prog-dot active" id="pd1"></div>
+    <div class="prog-dot" id="pd2"></div>
+    <div class="prog-dot" id="pd3"></div>
+    <div class="prog-dot" id="pd4"></div>
+    <div class="prog-dot" id="pd5"></div>
+    <span class="prog-label" id="progLabel">Step 1 of 5</span>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 1 — Both BS identical
+  ═══════════════════════════════════════ -->
+  <div class="screen active" id="s1">
+    <div class="step-header">
+      <div class="step-tag">Step 1 of 5</div>
+      <h2 class="step-title">ExampleCo — Balance Sheets</h2>
+      <p class="step-desc">Below are ExampleCo's opening and closing balance sheets for the year.</p>
+    </div>
+    <div id="grid1"></div>
+    <div class="mc-card">
+      <div class="mc-q">Is ExampleCo's balance sheet in balance for both periods?</div>
+      <div class="mc-opts" id="mc1">
+        <div class="mc-opt" data-correct="true"><div class="mc-letter">A</div>Yes — both periods are in balance</div>
+        <div class="mc-opt"><div class="mc-letter">B</div>No — the opening balance sheet is not in balance</div>
+        <div class="mc-opt"><div class="mc-letter">C</div>No — the closing balance sheet is not in balance</div>
+        <div class="mc-opt"><div class="mc-letter">D</div>Neither period is in balance</div>
+      </div>
+      <div class="feedback" id="fb1"></div>
+      <div class="nav-row">
+        <button class="btn-check" id="chk1" onclick="checkAnswer(1,2)">Check Answer</button>
+        <button class="btn-next"  id="nx1"  onclick="goTo(2)">Next &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 2 — Assets highlighted
+  ═══════════════════════════════════════ -->
+  <div class="screen" id="s2">
+    <div class="step-header">
+      <div class="step-tag">Step 2 of 5</div>
+      <h2 class="step-title">The numbers changed</h2>
+      <p class="step-desc">The closing balance sheet now shows updated figures. Look at the <strong>Assets</strong> section and answer the question below.</p>
+    </div>
+    <div id="grid2"></div>
+    <div class="mc-card">
+      <div class="mc-q-row">
+        <div class="mc-q">What is the change in Total Assets from opening to closing?</div>
+        <button class="btn-hint" id="hint2" onclick="toggleHint(2)">Show Hint</button>
+      </div>
+      <div class="mc-opts" id="mc2">
+        <div class="mc-opt"><div class="mc-letter">A</div>+12,000</div>
+        <div class="mc-opt" data-correct="true"><div class="mc-letter">B</div>+30,000</div>
+        <div class="mc-opt"><div class="mc-letter">C</div>+18,000</div>
+        <div class="mc-opt"><div class="mc-letter">D</div>No change</div>
+      </div>
+      <div class="feedback" id="fb2"></div>
+      <div class="nav-row">
+        <button class="btn-back" onclick="goTo(1)">&larr; Back</button>
+        <button class="btn-check" id="chk2" onclick="checkAnswer(2,3)">Check Answer</button>
+        <button class="btn-next"  id="nx2"  onclick="goTo(3)">Next &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 3 — Liabilities highlighted
+  ═══════════════════════════════════════ -->
+  <div class="screen" id="s3">
+    <div class="step-header">
+      <div class="step-tag">Step 3 of 5</div>
+      <h2 class="step-title">Now look at Liabilities</h2>
+      <p class="step-desc">Same balance sheets. Look at the <strong>Liabilities</strong> section and answer the question below.</p>
+    </div>
+    <div id="grid3"></div>
+    <div class="mc-card">
+      <div class="mc-q-row">
+        <div class="mc-q">What is the change in Total Liabilities from opening to closing?</div>
+        <button class="btn-hint" id="hint3" onclick="toggleHint(3)">Show Hint</button>
+      </div>
+      <div class="mc-opts" id="mc3">
+        <div class="mc-opt"><div class="mc-letter">A</div>+56,000</div>
+        <div class="mc-opt"><div class="mc-letter">B</div>+50,000</div>
+        <div class="mc-opt" data-correct="true"><div class="mc-letter">C</div>+6,000</div>
+        <div class="mc-opt"><div class="mc-letter">D</div>No change</div>
+      </div>
+      <div class="feedback" id="fb3"></div>
+      <div class="nav-row">
+        <button class="btn-back" onclick="goTo(2)">&larr; Back</button>
+        <button class="btn-check" id="chk3" onclick="checkAnswer(3,4)">Check Answer</button>
+        <button class="btn-next"  id="nx3"  onclick="goTo(4)">Next &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 4 — Retained Earnings highlighted
+  ═══════════════════════════════════════ -->
+  <div class="screen" id="s4">
+    <div class="step-header">
+      <div class="step-tag">Step 4 of 5</div>
+      <h2 class="step-title">Now look at Equities</h2>
+      <p class="step-desc">Same balance sheets. Look at the <strong>Equities</strong> section and answer the question below.</p>
+    </div>
+    <div id="grid4"></div>
+    <div class="mc-card">
+      <div class="mc-q-row">
+        <div class="mc-q">What is the change in Total Equities from opening to closing?</div>
+        <button class="btn-hint" id="hint4" onclick="toggleHint(4)">Show Hint</button>
+      </div>
+      <div class="mc-opts" id="mc4">
+        <div class="mc-opt"><div class="mc-letter">A</div>+14,000</div>
+        <div class="mc-opt"><div class="mc-letter">B</div>+7,000</div>
+        <div class="mc-opt" data-correct="true"><div class="mc-letter">C</div>+24,000</div>
+        <div class="mc-opt"><div class="mc-letter">D</div>No change</div>
+      </div>
+      <div class="feedback" id="fb4"></div>
+      <div class="nav-row">
+        <button class="btn-back" onclick="goTo(3)">&larr; Back</button>
+        <button class="btn-check" id="chk4" onclick="checkAnswer(4,5)">Check Answer</button>
+        <button class="btn-next"  id="nx4"  onclick="goTo(5)">Next &rarr;</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       SCREEN 5 — Cause question
+  ═══════════════════════════════════════ -->
+  <div class="screen" id="s5">
+    <div class="step-header">
+      <div class="step-tag">Step 5 of 5</div>
+      <h2 class="step-title">What caused these changes?</h2>
+      <p class="step-desc">You've measured the changes across all three sections of the balance sheet.</p>
+    </div>
+    <div id="grid5"></div>
+    <div class="delta-box">
+      <div class="delta-box-label">Changes observed</div>
+      <div class="delta-row">
+        <span class="delta-name">Total Assets</span>
+        <span class="delta-calc">150,000 &minus; 120,000</span>
+        <span class="delta-result">+30,000</span>
+      </div>
+      <div class="delta-row">
+        <span class="delta-name">Total Liabilities</span>
+        <span class="delta-calc">56,000 &minus; 50,000</span>
+        <span class="delta-result">+6,000</span>
+      </div>
+      <div class="delta-row">
+        <span class="delta-name">Total Equities</span>
+        <span class="delta-calc">94,000 &minus; 70,000</span>
+        <span class="delta-result">+24,000</span>
+      </div>
+    </div>
+    <div class="mc-card">
+      <div class="mc-q-row">
+        <div class="mc-q">Based only on these two balance sheets, what caused these changes?</div>
+        <button class="btn-hint" id="hint5" onclick="toggleHint(5)">Show Hint</button>
+      </div>
+      <div class="mc-opts" id="mc5">
+        <div class="mc-opt"><div class="mc-letter">A</div>The company earned a profit</div>
+        <div class="mc-opt"><div class="mc-letter">B</div>The company borrowed money from a bank</div>
+        <div class="mc-opt"><div class="mc-letter">C</div>Investors contributed more capital</div>
+        <div class="mc-opt" data-correct="true"><div class="mc-letter">D</div>We can't determine the cause from the balance sheet alone</div>
+      </div>
+      <div class="feedback" id="fb5"></div>
+      <div class="nav-row">
+        <button class="btn-back" onclick="goTo(4)">&larr; Back</button>
+        <button class="btn-check" id="chk5" onclick="checkAnswer(5,null)">Check Answer</button>
+        <span class="next-page-hint" id="btnCont">Go to the next page to see what's the cause!</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────
+var O = { cash:40000, nca:80000, loan:50000, cs:60000, re:10000 };
+var C = { cash:58000, nca:92000, loan:56000, cs:60000, re:34000 };
+
+function fmt(n) { return '$' + n.toLocaleString('en-US'); }
+
+// ── BALANCE SHEET RENDERER ────────────────────────────────────
+// highlight: null | 'assets' | 'liab' | 'equity' | 'all'
+// Both columns get highlights when a hint is active.
+// Only the Total row value is highlighted (not individual line items).
+function buildColumn(data, isClose, highlight) {
+  var ha  = !!(highlight === 'assets' || highlight === 'all');
+  var hl  = !!(highlight === 'liab'   || highlight === 'all');
+  var hte = !!(highlight === 'equity' || highlight === 'all');
+
+  var totalA = data.cash + data.nca;
+  var totalL = data.loan;
+  var totalE = data.cs + data.re;
+
+  function v(n, doHL) {
+    return '<span class="item-value' + (doHL ? ' hl' : '') + '">' + fmt(n) + '</span>';
+  }
+
+  return (
+    '<div class="bs-section">'
+    + '<div class="bs-section-title">Assets</div>'
+    + '<div class="bs-item"><span class="item-label">Cash Assets</span>'        + v(data.cash, false) + '</div>'
+    + '<div class="bs-item"><span class="item-label">Non-Cash Assets</span>'    + v(data.nca,  false) + '</div>'
+    + '<div class="bs-item total-row"><span class="item-label">Total Assets</span>' + v(totalA, ha) + '</div>'
+    + '</div>'
+
+    + '<div class="bs-section">'
+    + '<div class="bs-section-title">Liabilities</div>'
+    + '<div class="bs-item"><span class="item-label">Bank Loan</span>'          + v(data.loan, false) + '</div>'
+    + '<div class="bs-item total-row"><span class="item-label">Total Liabilities</span>' + v(totalL, hl) + '</div>'
+    + '</div>'
+
+    + '<div class="bs-section">'
+    + '<div class="bs-section-title">Equities</div>'
+    + '<div class="bs-item"><span class="item-label">Contributed Capital</span>' + v(data.cs,  false) + '</div>'
+    + '<div class="bs-item"><span class="item-label">Retained Earnings</span>'  + v(data.re,  false) + '</div>'
+    + '<div class="bs-item total-row"><span class="item-label">Total Equities</span>' + v(totalE, hte) + '</div>'
+    + '</div>'
+  );
+}
+
+function buildGrid(containerId, openData, closeData, highlight) {
+  document.getElementById(containerId).innerHTML =
+    '<div class="bs-two-col">'
+    + '<div class="bs-column">'
+    +   '<div class="bs-col-label">Opening Balance Sheet</div>'
+    +   '<div class="bs-col-box">' + buildColumn(openData, false, highlight) + '</div>'
+    + '</div>'
+    + '<div class="bs-column">'
+    +   '<div class="bs-col-label">Closing Balance Sheet</div>'
+    +   '<div class="bs-col-box">' + buildColumn(closeData, true, highlight) + '</div>'
+    + '</div>'
+    + '</div>';
+}
+
+// Render grids with highlight classes baked in.
+// Highlights are hidden by CSS until .hint-active is added to the grid div.
+buildGrid('grid1', O, C, null);
+buildGrid('grid2', O, C, 'assets');
+buildGrid('grid3', O, C, 'liab');
+buildGrid('grid4', O, C, 'equity');
+buildGrid('grid5', O, C, 'all');
+
+// toggleHint: show or hide the pre-rendered highlights by toggling .hint-active.
+// The class lives on the grid div so it persists across navigation.
+function toggleHint(screenNum) {
+  var grid = document.getElementById('grid' + screenNum);
+  var btn  = document.getElementById('hint' + screenNum);
+  var showing = grid.classList.toggle('hint-active');
+  if (btn) btn.textContent = showing ? 'Hide Hint' : 'Show Hint';
+}
+
+// ── FEEDBACK MESSAGES ─────────────────────────────────────────
+var FB = {
+  1: {
+    ok:  '\u2713 Correct. For each period, Assets \u2212 Liabilities = Equities. Opening: 120,000 \u2212 50,000 = 70,000. Closing: 150,000 \u2212 56,000 = 94,000. Both balance.',
+    err: 'Not quite. For each period, check whether Assets \u2212 Liabilities = Equities. Look at the totals in both columns and try again.'
+  },
+  2: {
+    ok:  '\u2713 Correct. Total Assets increased from 120,000 to 150,000 \u2014 a change of +30,000. Cash Assets rose by +18,000 and Non-Cash Assets by +12,000.',
+    err: 'Look at the Total Assets row in each column. Opening total: 120,000. Closing total: 150,000. What is the difference?'
+  },
+  3: {
+    ok:  '\u2713 Correct. The Bank Loan increased from 50,000 to 56,000 \u2014 a change of +6,000 in Total Liabilities.',
+    err: 'Focus on the Liabilities section. Compare the Total Liabilities row in the opening and closing columns and try again.'
+  },
+  4: {
+    ok:  '\u2713 Correct. Total Equities increased from 70,000 to 94,000 \u2014 a change of +24,000. Contributed Capital was unchanged; only Retained Earnings increased.',
+    err: 'Look at the Total Equities row in each column. Opening: 70,000. Closing: 94,000. What is the difference?'
+  },
+  5: {
+    ok:  '\u2713 Exactly right. The balance sheet shows balances at two points in time \u2014 not the transactions that produced them. Earning a profit, borrowing, or receiving investment could all result in similar-looking changes. To understand the actual cause, we need the other financial statements.',
+    err: 'Think carefully. The balance sheet only records beginning and ending balances \u2014 it does not explain what happened in between. Could any of the other options produce the same pattern of changes?'
+  }
+};
+
+// ── MC INTERACTION ────────────────────────────────────────────
+// Clicking selects (can change freely before checking).
+// Check Answer: correct → lock + Next; wrong → show feedback, allow redo (no correct revealed).
+
+function setupMC(screenNum) {
+  var mcEl  = document.getElementById('mc' + screenNum);
+  var chkEl = document.getElementById('chk' + screenNum);
+  var opts  = mcEl.querySelectorAll('.mc-opt');
+
+  opts.forEach(function(opt) {
+    opt.addEventListener('click', function() {
+      if (opt.classList.contains('locked')) return;
+      // Clear all selection/error states
+      opts.forEach(function(o) { o.classList.remove('selected', 'wrong'); });
+      // Select clicked option
+      opt.classList.add('selected');
+      // Show check button, hide any existing feedback
+      if (chkEl) chkEl.classList.add('show');
+      document.getElementById('fb' + screenNum).classList.remove('show');
+    });
+  });
+}
+
+function checkAnswer(screenNum, nextScreen) {
+  var mcEl     = document.getElementById('mc' + screenNum);
+  var fbEl     = document.getElementById('fb' + screenNum);
+  var chkEl    = document.getElementById('chk' + screenNum);
+  var opts     = mcEl.querySelectorAll('.mc-opt');
+  var selected = mcEl.querySelector('.mc-opt.selected');
+  if (!selected) return;
+
+  var correct = selected.getAttribute('data-correct') === 'true';
+
+  fbEl.className = 'feedback show ' + (correct ? 'ok' : 'err');
+  fbEl.innerHTML = FB[screenNum][correct ? 'ok' : 'err'];
+
+  if (correct) {
+    // Lock all options, mark correct, show Next
+    opts.forEach(function(o) { o.classList.add('locked'); });
+    selected.classList.remove('selected');
+    selected.classList.add('correct');
+    if (chkEl) chkEl.classList.remove('show');
+    if (nextScreen) {
+      document.getElementById('nx' + screenNum).classList.add('show');
+    } else {
+      document.getElementById('btnCont').classList.add('show');
+    }
+  } else {
+    // Mark wrong, but do NOT lock — student can reselect and try again
+    selected.classList.remove('selected');
+    selected.classList.add('wrong');
+    // Check button stays visible for retry
+  }
+}
+
+// ── NAVIGATION ────────────────────────────────────────────────
+function goTo(n) {
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById('s' + n).classList.add('active');
+  for (var i = 1; i <= 5; i++) {
+    var d = document.getElementById('pd' + i);
+    d.classList.remove('active', 'done');
+    if      (i < n)  d.classList.add('done');
+    else if (i === n) d.classList.add('active');
+  }
+  document.getElementById('progLabel').textContent = 'Step ' + n + ' of 5';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+for (var s = 1; s <= 5; s++) { setupMC(s); }
+</script>
+</body>
+</html>
