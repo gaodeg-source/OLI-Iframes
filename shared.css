@@ -11,8 +11,8 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
   font-family: Georgia, 'Times New Roman', serif;
-  color: #2a2a2a;
-  background: #e6e9f2;
+  color: #373a44;
+  background: #f3f5f8;
   line-height: 1.7;
 }
 
@@ -721,7 +721,7 @@ h2 {
 /*           two-snapshots/two-snapshots2.html                          */
 /*           two-snapshots/two-snapshots3.html                          */
 /*           1st_activity.html                                          */
-body { background: #E6E9F2; font-family: Inter, system-ui, sans-serif; color: #111; }
+body { background: #f3f5f8; font-family: Inter, system-ui, sans-serif; color: #373a44; }
 .page { width: 100%; margin: 0; padding: 0; }
 
 /* ===== ACTIVITY PAGES — TEXT BLOCKS ================================= */
@@ -768,3 +768,144 @@ body { background: #E6E9F2; font-family: Inter, system-ui, sans-serif; color: #1
 
 .act-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 18px; padding-top: 16px; border-top: 1px solid #f1f5f9; }
 .act-progress { font-size: 12px; color: #888; font-weight: 600; }
+
+/* ===== DARK MODE ===== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary: #6aa3e8;
+    --primary-light: #88b8f0;
+    --primary-faint: #1a2540;
+    --accent: #e07840;
+  }
+
+  body {
+    background: #1b191f;
+    color: #ffffff;
+  }
+
+  /* Nav */
+  .nav {
+    background: #32303c;
+    border-bottom-color: #2a2830;
+  }
+  .nav-home { color: var(--primary); }
+  .nav-sep { color: #38353f; }
+  .nav-current { color: #8a8898; }
+  .nav-btn { color: #b0aec0; border-color: #2a2830; }
+  .nav-btn:hover { background: #2c2a36; border-color: #3a3848; }
+  .nav-dropdown {
+    background: #32303c;
+    border-color: #2a2830;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  }
+  .nav-dropdown a { color: #ffffff; }
+  .nav-dropdown a:hover { background: var(--primary-faint); }
+  .nav-dd-num { background: #2c2a36; color: #8a8898; }
+
+  /* Progress */
+  .progress-strip { background: #2c2a36; }
+
+  /* Banner — gradient uses vars, already updates */
+  .banner-logo { background: rgba(255,255,255,0.10); }
+
+  /* Content divider */
+  .divider { border-top-color: #2a2830; }
+
+  /* Info boxes */
+  .info-box { background: #16243a; border-color: #22355a; }
+  .info-box h3 { color: var(--primary); }
+  .info-box p { color: #b0b8d0; }
+
+  /* Module header */
+  .module-header .module-subtitle { color: #8a8898; }
+
+  /* Accordion */
+  .accordion-section { background: #32303c; border-color: #2a2830; }
+  .accordion-trigger:hover { background: var(--primary-faint); }
+  .accordion-trigger .section-num { background: var(--primary-faint); color: var(--primary-light); }
+  .accordion-body { color: #d0cede; }
+  .accordion-body p { color: #d0cede; }
+
+  /* Rabbit holes */
+  .rabbit-hole { background: #1a1510; border-color: #352a1e; }
+  .rabbit-hole-trigger:hover { background: #221a10; }
+  .rabbit-hole-trigger .rh-chevron { color: #6b5540; }
+  .rabbit-hole-body { color: #b8afa4; }
+
+  /* Module prev/next nav */
+  .module-nav a { border-color: #2a2830; }
+  .module-nav a:hover { border-color: var(--primary-light); background: var(--primary-faint); }
+  .module-nav .nav-direction { color: #8a8898; }
+  .module-nav .nav-label { color: var(--primary); }
+
+  /* Welcome page */
+  .welcome-subtitle { color: #b0aec0; }
+  .welcome-text { color: #8a8898; }
+
+  /* Roadmap */
+  .roadmap-line { background: #2a2830; }
+  .roadmap-module { color: var(--primary-light); }
+  .roadmap-title { color: #eeebf5; }
+  .roadmap-desc { color: #8a8898; }
+
+  /* Transition */
+  .transition { color: #7e7c8c; border-top-color: #2a2830; }
+  .transition a { color: var(--primary); }
+
+  /* Glossary overlay */
+  .glossary-overlay { background: #32303c; border-left-color: #2a2830; }
+  .glossary-header { border-bottom-color: #2a2830; }
+  .glossary-header h3 { color: var(--primary); }
+  .glossary-close { color: #8a8898; }
+  .glossary-close:hover { color: #c0bece; }
+  .glossary-search { border-bottom-color: #2a2830; }
+  .glossary-search input {
+    background: #1b191f;
+    border-color: #2a2830;
+    color: #ffffff;
+  }
+  .glossary-search input:focus { border-color: var(--primary); }
+  .glossary-item { border-bottom-color: #32303c; }
+  .glossary-term { color: var(--primary); }
+  .glossary-def { color: #b0aec0; }
+
+  /* Transcript */
+  .transcript-toggle { color: #8a8898; }
+  .transcript-toggle:hover { color: #b0aec0; }
+  .transcript-box {
+    background: #32303c;
+    border-color: #2a2830;
+    color: #d0cede;
+  }
+
+  /* Activity pages */
+  .section-tag { color: #8a8898; }
+  .section-title { color: #eeebf5; }
+  .section-sub { color: #b0aec0; }
+  .prose p { color: #d0cede; }
+  .callout {
+    background: #16243a;
+    border-left-color: var(--primary);
+    color: #a8bcd8;
+  }
+  .callout strong { color: var(--primary-light); }
+  .section-card {
+    background: #32303c;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  }
+  .activity-card { border-color: #2a2830; }
+  .activity-tag {
+    background: var(--primary-faint);
+    color: var(--primary);
+  }
+  .activity-title { color: #eeebf5; }
+  .activity-desc { color: #b0aec0; }
+  .btn-outline {
+    background: #32303c;
+    color: #d0cede;
+    border-color: #2a2830;
+  }
+  .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+  .act-footer { border-top-color: #2a2830; }
+  .act-progress { color: #8a8898; }
+}
