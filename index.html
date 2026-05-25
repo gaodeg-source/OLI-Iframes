@@ -16,81 +16,94 @@
 
 /* ===== COURSE HEADER ===== */
 .course-eyebrow {
-  font-size: 11px; font-weight: 700; color: #888;
+  font-size: var(--font-xs); font-weight: 700; color: #888;
   letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px;
 }
 .course-title {
-  font-size: 28px; font-weight: 700; color: #111;
+  font-size: var(--font-xlg); font-weight: 700; color: #111;
   margin-bottom: 10px; line-height: 1.25;
 }
 .course-desc {
   font-family: 'Open Sans', sans-serif;
-  font-size: 15px; color: #555; line-height: 1.7;
+  font-size: var(--font-m); color: #555; line-height: 1.7;
   margin-bottom: 44px;
   max-width: 560px;
 }
 
-/* ===== SECTION LABEL ===== */
-.section-label {
-  font-size: 11px; font-weight: 700; color: #888;
-  letter-spacing: 0.8px; text-transform: uppercase;
-  margin-bottom: 14px;
+/* ===== MODULE SECTION ===== */
+.module-section {
+  margin-bottom: 36px;
+}
+.module-section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1.5px solid var(--border);
+}
+.module-section-num {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--primary-faint); border: 1.5px solid #bfdbfe;
+  display: flex; align-items: center; justify-content: center;
+  font-size: var(--font-s); font-weight: 700; color: var(--primary);
+  flex-shrink: 0;
+}
+.module-section-title {
+  font-size: var(--font-m); font-weight: 700; color: #111;
+}
+.module-section-count {
+  font-size: var(--font-xs); color: #888; margin-left: auto;
 }
 
-/* ===== MODULE LIST ===== */
-.module-list { display: flex; flex-direction: column; gap: 10px; }
-
-/* Active module card */
-.module-card {
-  background: white; border-radius: 14px;
-  border: 1.5px solid #e2e8f0;
-  padding: 20px 24px;
+/* ===== PAGE LINKS ===== */
+.page-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.page-link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  background: white;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
   text-decoration: none;
-  display: flex; align-items: center; gap: 18px;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
-.module-card:hover {
-  border-color: #00329d;
-  box-shadow: 0 2px 10px rgba(0,50,157,0.08);
+.page-link:hover {
+  border-color: var(--primary);
+  box-shadow: 0 2px 8px rgba(0,50,157,0.07);
 }
-
-.module-num {
-  width: 40px; height: 40px; border-radius: 10px;
-  background: #eff6ff; border: 1.5px solid #bfdbfe;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 14px; font-weight: 700; color: #00329d;
+.page-num {
+  font-size: var(--font-xs); font-weight: 700;
+  color: #aaa; min-width: 20px; text-align: right;
   flex-shrink: 0;
 }
-.module-body { flex: 1; min-width: 0; }
-.module-title {
-  font-size: 15px; font-weight: 700; color: #111;
-  margin-bottom: 3px; line-height: 1.4;
+.page-title {
+  font-size: var(--font-s); font-weight: 600; color: #111;
+  flex: 1;
 }
-.module-meta { font-size: 12px; color: #888; }
-.module-arrow {
-  font-size: 18px; color: #c5c8d4; flex-shrink: 0;
+.page-arrow {
+  font-size: var(--font-m); color: #c5c8d4; flex-shrink: 0;
   transition: color 0.15s, transform 0.15s;
 }
-.module-card:hover .module-arrow { color: #00329d; transform: translateX(3px); }
+.page-link:hover .page-arrow { color: var(--primary); transform: translateX(3px); }
 
-/* Locked / coming-soon module */
-.module-card-locked {
-  background: #fafafa; border-radius: 14px;
-  border: 1.5px solid #e9ecef;
-  padding: 20px 24px;
-  display: flex; align-items: center; gap: 18px;
-  opacity: 0.55;
-  cursor: default;
+@media (prefers-color-scheme: dark) {
+  .course-title { color: #eeebf5; }
+  .course-desc { color: #b0aec0; }
+  .course-eyebrow { color: #6a6878; }
+  .module-section-title { color: #eeebf5; }
+  .module-section-count { color: #6a6878; }
+  .page-link { background: #32303c; border-color: var(--border); }
+  .page-link:hover { border-color: var(--primary); }
+  .page-title { color: #eeebf5; }
+  .page-num { color: #6a6878; }
+  .module-section-num { background: #1a2540; border-color: #2a3a5a; }
 }
-.module-num-locked {
-  width: 40px; height: 40px; border-radius: 10px;
-  background: #f1f5f9; border: 1.5px solid #e2e8f0;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 14px; font-weight: 700; color: #aaa;
-  flex-shrink: 0;
-}
-.module-title-locked { font-size: 15px; font-weight: 600; color: #888; margin-bottom: 3px; }
-.module-soon { font-size: 11px; font-weight: 600; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px; }
 </style>
 <script src="email-gate.js"></script>
 </head>
@@ -101,41 +114,89 @@
   <h1 class="course-title">Financial Statements &amp; Accounting Fundamentals</h1>
   <p class="course-desc">Work through each module in order. Each module contains readings and embedded activities — complete them before moving on.</p>
 
-  <div class="section-label">Modules</div>
-
-  <div class="module-list">
-
-    <!-- Module 1 -->
-    <a class="module-card" href="Module-1/1.1-getting-organized.html">
-      <div class="module-num">1</div>
-      <div class="module-body">
-        <div class="module-title">Getting Organized</div>
-        <div class="module-meta">1 page · activities included</div>
-      </div>
-      <span class="module-arrow">›</span>
-    </a>
-
-    <!-- Module 2 -->
-    <a class="module-card" href="Module-2/reflect4_sarah.html">
-      <div class="module-num">2</div>
-      <div class="module-body">
-        <div class="module-title">Transactions &amp; Financial Statements</div>
-        <div class="module-meta">1 page · activities included</div>
-      </div>
-      <span class="module-arrow">›</span>
-    </a>
-
-    <!-- Module 3 -->
-    <a class="module-card" href="Module-3/01-imposing-the-identity.html">
-      <div class="module-num">3</div>
-      <div class="module-body">
-        <div class="module-title">The Balance Sheet &amp; Financial Statements</div>
-        <div class="module-meta">8 pages · activities included</div>
-      </div>
-      <span class="module-arrow">›</span>
-    </a>
-
+  <!-- Module 1 -->
+  <div class="module-section">
+    <div class="module-section-header">
+      <div class="module-section-num">1</div>
+      <div class="module-section-title">Getting Organized</div>
+      <div class="module-section-count">1 page</div>
+    </div>
+    <div class="page-list">
+      <a class="page-link" href="Module-1/1.1-getting-organized.html">
+        <span class="page-num">1.1</span>
+        <span class="page-title">Getting Organized</span>
+        <span class="page-arrow">›</span>
+      </a>
+    </div>
   </div>
+
+  <!-- Module 2 -->
+  <div class="module-section">
+    <div class="module-section-header">
+      <div class="module-section-num">2</div>
+      <div class="module-section-title">Transactions &amp; Financial Statements</div>
+      <div class="module-section-count">1 page</div>
+    </div>
+    <div class="page-list">
+      <a class="page-link" href="Module-2/reflect4_sarah.html">
+        <span class="page-num">2.1</span>
+        <span class="page-title">Transactions &amp; the Financial Statements</span>
+        <span class="page-arrow">›</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Module 3 -->
+  <div class="module-section">
+    <div class="module-section-header">
+      <div class="module-section-num">3</div>
+      <div class="module-section-title">The Balance Sheet &amp; Financial Statements</div>
+      <div class="module-section-count">8 pages</div>
+    </div>
+    <div class="page-list">
+      <a class="page-link" href="Module-3/01-imposing-the-identity.html">
+        <span class="page-num">3.1</span>
+        <span class="page-title">Imposing the Identity</span>
+        <span class="page-arrow">›</span>
+      </a>
+      <a class="page-link" href="Module-3/02-two-snapshots-1.html">
+        <span class="page-num">3.2</span>
+        <span class="page-title">The Balance Sheet as a Snapshot</span>
+        <span class="page-arrow">›</span>
+      </a>
+      <a class="page-link" href="Module-3/02-two-snapshots-2.html">
+        <span class="page-num">3.3</span>
+        <span class="page-title">What Changed Between the Two Dates</span>
+        <span class="page-arrow">›</span>
+      </a>
+      <a class="page-link" href="Module-3/02-two-snapshots-3.html">
+        <span class="page-num">3.4</span>
+        <span class="page-title">Recognition, Classification, and Quantification</span>
+        <span class="page-arrow">›</span>
+      </a>
+      <a class="page-link" href="Module-3/03-three-flow-statements.html">
+        <span class="page-num">3.5</span>
+        <span class="page-title">The Three Flow Statements</span>
+        <span class="page-arrow">›</span>
+      </a>
+      <a class="page-link" href="Module-3/04-how-fit-together.html">
+        <span class="page-num">3.6</span>
+        <span class="page-title">How They Fit Together</span>
+        <span class="page-arrow">›</span>
+      </a>
+      <a class="page-link" href="Module-3/05-1st_activity.html">
+        <span class="page-num">3.7</span>
+        <span class="page-title">Balance Sheet Identity — Activity</span>
+        <span class="page-arrow">›</span>
+      </a>
+      <a class="page-link" href="Module-3/06-structure-activity.html">
+        <span class="page-num">3.8</span>
+        <span class="page-title">Financial Statement Structure — Activity</span>
+        <span class="page-arrow">›</span>
+      </a>
+    </div>
+  </div>
+
 </div>
 </body>
 </html>
