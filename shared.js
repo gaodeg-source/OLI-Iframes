@@ -182,8 +182,9 @@ function applyConfig() {
   if (typeof SITE_CONFIG === 'undefined') return;
   var C = SITE_CONFIG;
   var r = document.documentElement.style;
+  var isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-  if (C.colors) {
+  if (C.colors && !isDark) {
     if (C.colors.primary)      r.setProperty('--primary', C.colors.primary);
     if (C.colors.primaryLight)  r.setProperty('--primary-light', C.colors.primaryLight);
     if (C.colors.faint)         r.setProperty('--primary-faint', C.colors.faint);

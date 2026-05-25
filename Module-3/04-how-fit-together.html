@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="color-scheme" content="light dark">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How They Fit Together</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared.css">
+</head>
+<body>
+<div class="page">
+
+  <!-- ============================================================
+       OPENING TEXT
+  ============================================================ -->
+  <div class="text-block">
+    <p class="prose">It is tempting to think of these as four separate reports that happen to fit together. They are not. <strong>There is one change — the difference between the opening balance sheet and the closing balance sheet — and the flow statements are decompositions of that change.</strong> The income statement does not "agree with" the change in retained earnings. It is an explanation of part of that change. It cannot be inconsistent with the balance sheets, because it is not a separate account of the same events — it is a breakdown of what happened to one component of equities over the period. <strong>The same is true of the cash flow statement: it does not "match" the change in cash on the balance sheet. It is that change, decomposed into operating, investing, and financing categories.</strong></p>
+  </div>
+
+  <!-- ============================================================
+       STRUCTURE + READING PARAGRAPHS
+  ============================================================ -->
+  <div class="text-block">
+    <p class="prose">The structure, then, is this:</p>
+    <div class="structure-diagram">
+      <div class="sd-row">Balance sheet (opening)</div>
+      <div class="sd-arrow">↓&ensp; what changed, and why? &ensp;↓</div>
+      <div class="sd-row">Balance sheet (closing)</div>
+    </div>
+    <p class="prose"><strong>The flow statements are the "what changed, and why."</strong> Each one decomposes a different aspect of the difference between the two snapshots. The income statement decomposes the operating portion of the change in equities. The cash flow statement decomposes the change in one particular asset — cash. <strong>The statement of changes in equities decomposes the full movement from opening equities to closing equities, including both operations and transactions with owners.</strong> They are not four windows that happen to look onto the same building. They are the building, taken apart into pieces so you can see how it was constructed.</p>
+      <p class="prose">This matters for how you read financial statements. The income statement might show strong revenues, but the cash flow statement might reveal that the cash has not arrived yet — because the revenue is real (the entity earned it) but the collection is still pending. The balance sheet might show growing assets, but the statement of changes in equities might show that the growth came from new capital contributed by owners, not from operations. <strong>Reading one statement in isolation tells you something, but you are seeing only one piece of the decomposition. The full picture requires all the pieces together.</strong></p>
+  </div>
+
+  <!-- ============================================================
+       ACTIVITY 2 — WHY SINGLE OUT CASH?
+  ============================================================ -->
+  <div class="section-card activity-card">
+    <div class="activity-tag">&#10003; Activity</div>
+    <div class="activity-title">Why Single Out Cash?</div>
+    <div class="activity-desc">Select <strong>all</strong> of the statements below that give a genuine reason why the system has a separate cash flow statement. Then click Check.</div>
+    <div class="ms-list" id="msList"></div>
+    <div class="act-footer">
+      <span class="act-progress" id="act2Progress">Select all that apply</span>
+      <div class="act-footer-btns">
+        <button class="btn btn-outline" id="msReset" onclick="resetMs()" style="display:none">Reset</button>
+        <button class="btn btn-primary" id="msCheck" onclick="checkMs()">Check</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       RABBIT HOLE
+  ============================================================ -->
+  <div class="rabbit-hole">
+    <button class="rh-toggle" id="rhToggle" onclick="toggleRh()">
+      <span class="rh-icon">🐇</span>
+      <span class="rh-label">Why single out cash for its own statement?</span>
+      <span class="rh-chevron">▼</span>
+    </button>
+    <div class="rh-body" id="rhBody">
+      <p class="prose">The identity does not require a separate statement for cash. The balance sheet already shows the cash balance at each date, and the statement of changes in equities already reconciles the full movement in the residual. A cash flow statement is an addition — a choice to decompose the change in one particular asset because that asset is uniquely informative.</p>
+      <p class="prose">Here is why. Cash is the one line on the balance sheet where you just count it — add up the bank accounts and that is the number. No conventions about recognition timing, no judgment about useful lives or collectibility, no estimates. It is about as close to a brute fact as the system gets. The income statement, by contrast, is full of conventions. When to recognize revenue, how to allocate costs, what to depreciate over what period — all of these choices affect net income. Comparing cash from operations to net income, then, tells you something important: how much of the income statement's story was shaped by accounting conventions versus how much was backed by actual cash movement. A large persistent gap between the two should make you curious about what the conventions are doing.</p>
+      <p class="prose">The cash flow statement also addresses a different question from the income statement. Entities can be solvent — have more assets than liabilities — and still not be liquid — able to pay obligations as they come due. The income statement tells you about operations. The cash flow statement tells you whether the entity can actually pay its bills. These are different questions, and the people who rely on the system care about both.</p>
+      <p class="prose">For a long time, cash seemed like the one category that did not involve much in the way of difficult conventions. Cash is cash. But even this apparent simplicity has limits. The emergence of cryptocurrencies forced standard-setters to reconsider not whether to count what is in the category, but what belongs in the category in the first place — a reminder that even the most concrete-seeming elements of the system rest on conventions about what counts.</p>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+/* ================================================================
+   ACTIVITY — MULTI-SELECT
+================================================================ */
+var MS_ITEMS = [
+  {
+    text: 'Cash is more concrete than most items on the income statement — you count bank accounts rather than relying on estimates or judgment calls.',
+    correct: true,
+    hint: 'Right. Cash is about as close to a brute fact as the system gets, which is precisely what makes comparing it to income informative.'
+  },
+  {
+    text: 'The cash flow statement addresses a different question from the income statement: whether the entity can pay its obligations as they come due.',
+    correct: true,
+    hint: 'Right. Solvency (more assets than liabilities) and liquidity (able to pay bills now) are different things. The cash flow statement speaks to liquidity.'
+  },
+  {
+    text: 'Comparing cash from operations to net income helps reveal how much the income statement\'s story was shaped by accounting conventions.',
+    correct: true,
+    hint: 'Right. A large persistent gap between the two is a signal worth investigating — it shows how much the conventions are doing.'
+  },
+  {
+    text: 'Cash from operations and net income should be equal when the accounting is done correctly, so the statement serves as an error check.',
+    correct: false,
+    hint: 'Not quite. The two figures measure different things and will almost always differ. Sales on credit, depreciation, and other timing differences make the gap normal, not a sign of error.'
+  },
+  {
+    text: 'The balance sheet cannot show the cash balance at each period end, so a separate statement is needed to establish what the cash balance is.',
+    correct: false,
+    hint: 'Not quite. The balance sheet already shows the cash balance at each date. The cash flow statement explains the change in that balance, not what the balance is.'
+  }
+];
+
+var msSelected = new Array(MS_ITEMS.length).fill(false);
+var msRevealed = false;
+
+function renderMs() {
+  var list = document.getElementById('msList');
+  list.innerHTML = '';
+  MS_ITEMS.forEach(function(item, i) {
+    var el = document.createElement('div');
+    el.className = 'ms-item';
+    if (msSelected[i] && !msRevealed) el.classList.add('selected');
+    if (msRevealed) {
+      el.classList.add('revealed');
+      if (item.correct && msSelected[i])   el.classList.add('correct-pick');
+      if (!item.correct && msSelected[i])  el.classList.add('wrong-pick');
+      if (item.correct && !msSelected[i])  el.classList.add('missed-pick');
+    }
+    if (!msRevealed) {
+      el.addEventListener('click', function() { msSelected[i] = !msSelected[i]; renderMs(); });
+    }
+    var check = document.createElement('div');
+    check.className = 'ms-check';
+    if (msRevealed) {
+      if (item.correct && msSelected[i])  check.textContent = '✓';
+      if (!item.correct && msSelected[i]) check.textContent = '✗';
+      if (item.correct && !msSelected[i]) check.textContent = '!';
+    } else {
+      check.textContent = msSelected[i] ? '✓' : '';
+    }
+    var body = document.createElement('div');
+    body.className = 'ms-body';
+    var text = document.createElement('div');
+    text.className = 'ms-text';
+    text.textContent = item.text;
+    var hint = document.createElement('div');
+    hint.className = 'ms-hint';
+    hint.textContent = item.hint;
+    body.appendChild(text);
+    body.appendChild(hint);
+    el.appendChild(check);
+    el.appendChild(body);
+    list.appendChild(el);
+  });
+  var prog = document.getElementById('act2Progress');
+  if (msRevealed) {
+    var correct = MS_ITEMS.filter(function(item, i) {
+      return (item.correct && msSelected[i]) || (!item.correct && !msSelected[i]);
+    }).length;
+    prog.textContent = correct + ' of ' + MS_ITEMS.length + ' correct';
+    prog.style.color = correct === MS_ITEMS.length ? '#16a34a' : '#888';
+  } else {
+    var sel = msSelected.filter(Boolean).length;
+    prog.textContent = sel > 0 ? sel + ' selected' : 'Select all that apply';
+  }
+}
+
+function checkMs() {
+  msRevealed = true;
+  document.getElementById('msCheck').style.display = 'none';
+  document.getElementById('msReset').style.display = '';
+  renderMs();
+}
+
+function resetMs() {
+  msSelected = new Array(MS_ITEMS.length).fill(false);
+  msRevealed = false;
+  document.getElementById('msCheck').style.display = '';
+  document.getElementById('msReset').style.display = 'none';
+  document.getElementById('act2Progress').style.color = '';
+  renderMs();
+}
+
+renderMs();
+
+/* ================================================================
+   RABBIT HOLE TOGGLE
+================================================================ */
+function toggleRh() {
+  var toggle = document.getElementById('rhToggle');
+  var body   = document.getElementById('rhBody');
+  var open   = body.classList.contains('open');
+  body.classList.toggle('open', !open);
+  toggle.classList.toggle('open', !open);
+}
+</script>
+</body>
+</html>

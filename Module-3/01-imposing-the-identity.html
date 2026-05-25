@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en" class="micro-activity">
+<head>
+<meta charset="UTF-8">
+<meta name="color-scheme" content="light dark">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Imposing the Identity — Yale Micro Activity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared.css">
+<style>
+  /* PAGE-SPECIFIC: .dnd-bank used as a white card (shared.css .dnd-bank is a plain flex container) */
+  .dnd-bank {
+    display: flex; flex-wrap: wrap; gap: 10px; padding: 16px;
+    background: white; border-radius: 12px; border: 1px solid var(--border);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06); min-height: 72px; margin-bottom: 18px;
+    align-items: flex-start; align-content: flex-start;
+  }
+  .dnd-bank-label { margin-bottom: 4px; }
+  .dnd-bank-label.wait-label { color: #6a4020; }
+
+  /* PAGE-SPECIFIC: 3-column zone grid for stage 2 (shared.css .dnd-zones is 2-col) */
+  .dnd-zones { grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 640px) { .dnd-zones { grid-template-columns: 1fr; } }
+
+  /* PAGE-SPECIFIC: zone color variants keyed on .dnd-zone (shared.css uses .dnd-zone-col) */
+  .dnd-zone.z-assets, .dnd-zone.z-liab, .dnd-zone.z-equity { border-color: #93c5fd; background: #f0f7ff; }
+  .dnd-zone.over { background: #dbeafe; border-color: var(--primary); transform: scale(1.02); }
+  .dnd-zone.z-press { border-color: var(--warn-border); background: var(--warn-bg); }
+  .dnd-zone.z-press.over { background: #fef3c7; border-color: #d97706; transform: scale(1.02); }
+  .dnd-zone.z-press .zone-title { color: #6a4020; }
+  .dnd-zone.z-press .zone-hint { color: #b45309; }
+
+  /* PAGE-SPECIFIC: selected card state + press-release chip */
+  .dnd-card.selected { border-color: var(--primary); background: var(--primary-faint); color: #1d4ed8; }
+  .placed-chip.press { background: #fef3c7; color: #6a4020; }
+
+  /* PAGE-SPECIFIC: press-explain block uses warn-border and tighter padding */
+  .press-explain-block { border-color: var(--warn-border); padding: 10px 12px; margin-top: 8px; }
+
+  @media (prefers-color-scheme: dark) {
+    .dnd-bank { background: #32303c; border-color: #4a4858; }
+    .dnd-bank-label.wait-label { color: #c8a86a; }
+    .dnd-card.selected { background: var(--primary-faint); border-color: var(--primary); color: #93c5fd; }
+    .dnd-zone.z-assets, .dnd-zone.z-liab, .dnd-zone.z-equity { background: #1a2540; border-color: #3a5080; }
+    .dnd-zone.over { background: var(--primary-faint); border-color: var(--primary); }
+    .dnd-zone.z-press { background: #26200e; border-color: #6a4020; }
+    .dnd-zone.z-press.over { background: #2c2416; border-color: #5a4828; }
+    .dnd-zone.z-press .zone-title { color: #c8a86a; }
+    .dnd-zone.z-press .zone-hint { color: #7a5a28; }
+    .placed-chip.press { background: #181208; color: #c8a86a; }
+    .press-explain-block { background: #32303c; border-color: #5a3a1a; }
+  }
+</style>
+</head>
+<body>
+
+<div class="activity-content">
+
+  <div class="section-tag">Accounting Foundations</div>
+  <h1>Imposing the Identity</h1>
+
+  <p class="prose">The first move is to impose a structural constraint on the system. Not discover one. Not derive one from economic theory. <strong>Impose one</strong> — a deliberate design choice, made because of what it makes possible.</p>
+
+  <p class="prose">The constraint is the accounting identity:</p>
+
+  <!-- EQUATION VISUAL -->
+  <div class="eq-compare">
+
+    <div class="eq-panel">
+      <div class="eq-panel-tag">Standard form</div>
+      <div class="eq-panel-row">
+        <span class="eq-term a">Assets</span>
+        <span class="eq-op">=</span>
+        <span class="eq-term l">Liabilities</span>
+        <span class="eq-op">+</span>
+        <span class="eq-term e">Equities</span>
+      </div>
+      <div class="eq-panel-caption">Looks like three independent quantities that happen to balance</div>
+    </div>
+
+    <div class="eq-connector">
+      <div class="eq-connector-rule"></div>
+      <div class="eq-connector-label">↕ same algebra</div>
+      <div class="eq-connector-rule"></div>
+    </div>
+
+    <div class="eq-panel">
+      <div class="eq-panel-tag">Rearranged form</div>
+      <div class="eq-panel-row">
+        <span class="eq-term a">Assets</span>
+        <span class="eq-op">−</span>
+        <span class="eq-term l">Liabilities</span>
+        <span class="eq-op">=</span>
+        <span class="eq-term e">Equities</span>
+      </div>
+      <div class="eq-panel-caption">Reveals that equities is <em>derived</em> — not an independent quantity</div>
+    </div>
+
+  </div>
+
+  <p class="prose">This is the form you will encounter in most textbooks and most practice. It says: at any date, everything the entity has recorded as its resources (assets) equals everything it has recorded as obligations to outside parties (liabilities) plus a third category called equities. Written this way, it looks like three independent quantities that happen to balance — as though the identity were a surprising empirical fact, something you might test and find to be true.</p>
+
+  <p class="prose">But now rearrange it. Same algebra. But the rearranged form reveals something the first form hides: equities is not an independent third quantity. It is the difference between assets and liabilities. Once you have recorded assets and liabilities, equities is determined. There is nothing else to decide.</p>
+
+  <div class="insight-box">
+    <div class="insight-label">Key Insight</div>
+    <p>The identity is a tautology — true by definition, not by coincidence. And that is exactly what makes it so powerful as a structural constraint.</p>
+  </div>
+
+  <hr class="divider">
+
+  <h2>What Each Term Means</h2>
+
+  <div class="def-grid">
+
+    <div class="flip-card a" onclick="this.classList.toggle('flipped')">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <div class="def-title">Assets</div>
+          <div class="def-brief">Present <strong>rights</strong> to economic benefits — not physical things. No future benefit, no asset.</div>
+          <div class="flip-hint">Click to read more ›</div>
+        </div>
+        <div class="flip-card-back">
+          <div class="flip-back-title">Assets</div>
+          <p>Assets are present rights to economic benefits. Not physical things — rights. A building is an asset not because it is a physical structure but because the entity holds the right to use it, rent it, or sell it. Cash is an asset because it embodies the right to acquire other things. A receivable is an asset because it represents the right to collect cash from someone who owes it. No future benefit, no asset.</p>
+          <div class="flip-back-hint">Click to flip back ‹</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flip-card l" onclick="this.classList.toggle('flipped')">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <div class="def-title">Liabilities</div>
+          <div class="def-brief">Present <strong>obligations</strong> to transfer economic benefits — something the entity cannot avoid.</div>
+          <div class="flip-hint">Click to read more ›</div>
+        </div>
+        <div class="flip-card-back">
+          <div class="flip-back-title">Liabilities</div>
+          <p>Liabilities are present obligations to transfer economic benefits. The entity owes something to someone and cannot avoid the transfer. A loan requires repayment. A payable means the entity received goods and has not yet paid. Wages earned by employees but not yet disbursed are a liability. The obligation must be compelling — not optional, not merely possible, but something the entity is required to fulfill.</p>
+          <div class="flip-back-hint">Click to flip back ‹</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flip-card e" onclick="this.classList.toggle('flipped')">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <div class="def-title">Equities / Net Assets</div>
+          <div class="def-brief">The <strong>derived difference</strong>: assets minus liabilities. Not independent — entirely determined by the other two.</div>
+          <div class="flip-hint">Click to read more ›</div>
+        </div>
+        <div class="flip-card-back">
+          <div class="flip-back-title">Equities / Net Assets</div>
+          <p>Equities are the difference: assets minus liabilities. Not an independent concept — a derived one. In a for-profit company, we call this difference equities and associate it with the owners' residual interest. But the number is entirely determined by how assets and liabilities were recorded. Change the conventions for recording assets or liabilities, and equities changes too — not because anything happened to the owners, but because the inputs to the subtraction changed.</p>
+          <div class="flip-back-hint">Click to flip back ‹</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <hr class="divider">
+
+  <h2>The Architecture Transfers</h2>
+
+  <p class="prose">Now consider what happens when the entity has no owners at all. A university, a hospital, a charitable foundation — these organizations have assets and liabilities, but no shareholders. Does the identity break? No. Assets minus liabilities is still a difference. You just call it <strong>net assets</strong> instead of equities. The architecture does not change. The double-entry recording does not change. The decomposition into flow statements does not change. Everything transfers without modification — only the label on the difference is different.</p>
+
+  <div class="org-compare">
+    <div class="org-card">
+      <div class="org-type">For-Profit</div>
+      <div class="org-name">Corporation</div>
+      <div class="org-eq">
+        <div class="org-eq-row">
+          <span class="pill a">Assets</span>
+          <span class="pill-op">−</span>
+          <span class="pill l">Liabilities</span>
+          <span class="pill-op">=</span>
+          <span class="pill e">Equities</span>
+        </div>
+        <span class="org-badge">Owners' residual interest</span>
+      </div>
+    </div>
+    <div class="org-card">
+      <div class="org-type">Nonprofit</div>
+      <div class="org-name">University · Hospital · Foundation</div>
+      <div class="org-eq">
+        <div class="org-eq-row">
+          <span class="pill a">Assets</span>
+          <span class="pill-op">−</span>
+          <span class="pill l">Liabilities</span>
+          <span class="pill-op">=</span>
+          <span class="pill na">Net Assets</span>
+        </div>
+        <span class="org-badge">Same arithmetic — different label</span>
+      </div>
+    </div>
+  </div>
+
+  <p class="prose">This is one of the strongest pieces of evidence that the identity is a genuinely powerful design choice. It is not specific to for-profit companies. It is not built around ownership. It is a general-purpose structure for organizing financial information about any entity that has resources and obligations. The fact that you can move from a corporation to a nonprofit to a government agency by relabeling the difference — without touching anything else in the architecture — tells you how deep the design goes.</p>
+
+  <hr class="divider">
+
+  <!-- ===== MICRO ACTIVITY ===== -->
+
+  <!-- Stage 1: Recognition -->
+  <div id="stage1Activity">
+    <div class="section-tag">Activity — Step 1 of 2</div>
+    <h2>Recognize or Issue a Press Release?</h2>
+    <p class="prose">Before classifying anything, decide what even enters the accounting records. Some of these events are economically important — but they don't qualify for recognition yet. Drag each item into the correct pool, or tap an item then tap a zone.</p>
+
+    <div class="dnd-section">
+
+      <div class="dnd-progress">
+        <span id="s1ProgressText">0 of 10 sorted</span>
+        <div class="progress-bar"><div class="progress-fill" id="s1ProgressFill" style="width:0%"></div></div>
+      </div>
+
+      <div class="dnd-bank" id="s1Bank">
+        <div class="dnd-bank-label">All items — sort them below</div>
+      </div>
+
+      <div class="dnd-zones-2col">
+        <div class="dnd-zone z-assets" id="s1-zone-recognized" data-zone="recognized">
+          <div class="zone-title">In the accounting records</div>
+          <div class="zone-hint">Qualifies as an asset, liability, or equity right now</div>
+          <div class="zone-items" id="s1-items-recognized"></div>
+        </div>
+        <div class="dnd-zone z-press" id="s1-zone-press" data-zone="press">
+          <div class="zone-title">Press release only</div>
+          <div class="zone-hint">Important economic event — but not yet in the statements</div>
+          <div class="zone-items" id="s1-items-press"></div>
+        </div>
+      </div>
+
+      <div class="dnd-result" id="s1Result">
+        <div class="result-score" id="s1Score"></div>
+        <div class="result-msg" id="s1Msg"></div>
+        <div id="s1Buttons" style="display:none; gap:10px; flex-wrap:wrap; margin-top:4px;">
+          <button class="btn-continue" onclick="startStage2()">Classify the recognized items →</button>
+          <button class="btn-reset" onclick="resetStage1()">↺ Reset</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Stage 2: Classification -->
+  <div id="stage2Activity" style="display:none">
+    <div class="section-tag">Activity — Step 2 of 2</div>
+    <h2>Now Classify the Recognized Items</h2>
+    <p class="prose">The press release items have been set aside — they don't enter the statements yet. Now classify each recognized item as an asset, liability, or equity. Drag or tap to place.</p>
+
+    <div class="stage-note" id="pressReleaseNote"></div>
+
+    <div class="dnd-section">
+
+      <div class="dnd-progress">
+        <span id="s2ProgressText">0 of 8 classified</span>
+        <div class="progress-bar"><div class="progress-fill" id="s2ProgressFill" style="width:0%"></div></div>
+      </div>
+
+      <div class="dnd-bank" id="s2Bank">
+        <div class="dnd-bank-label">Recognized items — classify them below</div>
+      </div>
+
+      <div class="dnd-zones">
+        <div class="dnd-zone z-assets" id="s2-zone-assets" data-zone="assets">
+          <div class="zone-title">Assets</div>
+          <div class="zone-hint">Present rights to economic benefits</div>
+          <div class="zone-items" id="s2-items-assets"></div>
+        </div>
+        <div class="dnd-zone z-liab" id="s2-zone-liab" data-zone="liab">
+          <div class="zone-title">Liabilities</div>
+          <div class="zone-hint">Present obligations to transfer benefits</div>
+          <div class="zone-items" id="s2-items-liab"></div>
+        </div>
+        <div class="dnd-zone z-equity" id="s2-zone-equity" data-zone="equity">
+          <div class="zone-title">Equities / Net Assets</div>
+          <div class="zone-hint">The derived difference</div>
+          <div class="zone-items" id="s2-items-equity"></div>
+        </div>
+      </div>
+
+      <div class="dnd-result" id="s2Result">
+        <div class="result-score" id="s2Score"></div>
+        <div class="result-msg" id="s2Msg"></div>
+        <button class="btn-reset" onclick="resetAll()">↺ Start over</button>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <h2>Why Impose a Constraint?</h2>
+
+  <p class="prose">Because it makes the system <strong>self-balancing</strong>. Every transaction that enters the system must be recorded in a way that keeps the identity in balance. If the entity receives cash (an asset goes up), something else must change: either another asset goes down (spent cash to buy equipment), a liability goes up (borrowed the cash), or equities goes up (an owner contributed the cash, or the entity earned it). There is no transaction that affects only one side of the identity.</p>
+
+  <div class="de-visual">
+
+    <div class="de-card">
+      <div class="de-num">1</div>
+      <div class="de-event">Spent cash to buy equipment</div>
+      <div class="de-eq">
+        <div class="de-side">
+          <div class="de-side-label">Assets</div>
+          <div class="de-delta down">Cash −$10k</div>
+          <div class="de-delta up">Equipment +$10k</div>
+          <div class="de-net">Net: $0</div>
+        </div>
+        <div class="de-op">=</div>
+        <div class="de-side">
+          <div class="de-side-label">Liabilities + Equities</div>
+          <div class="de-delta none">No change</div>
+          <div class="de-net">Net: $0</div>
+        </div>
+      </div>
+      <div class="de-verdict">✓ Both sides unchanged — balanced</div>
+    </div>
+
+    <div class="de-card">
+      <div class="de-num">2</div>
+      <div class="de-event">Borrowed cash from a bank</div>
+      <div class="de-eq">
+        <div class="de-side">
+          <div class="de-side-label">Assets</div>
+          <div class="de-delta up">Cash +$10k</div>
+          <div class="de-net">Net: +$10k</div>
+        </div>
+        <div class="de-op">=</div>
+        <div class="de-side">
+          <div class="de-side-label">Liabilities + Equities</div>
+          <div class="de-delta up">Bank loan +$10k</div>
+          <div class="de-net">Net: +$10k</div>
+        </div>
+      </div>
+      <div class="de-verdict">✓ Both sides up equally — balanced</div>
+    </div>
+
+    <div class="de-card">
+      <div class="de-num">3</div>
+      <div class="de-event">Owner contributed cash</div>
+      <div class="de-eq">
+        <div class="de-side">
+          <div class="de-side-label">Assets</div>
+          <div class="de-delta up">Cash +$10k</div>
+          <div class="de-net">Net: +$10k</div>
+        </div>
+        <div class="de-op">=</div>
+        <div class="de-side">
+          <div class="de-side-label">Liabilities + Equities</div>
+          <div class="de-delta up">Equities +$10k</div>
+          <div class="de-net">Net: +$10k</div>
+        </div>
+      </div>
+      <div class="de-verdict">✓ Both sides up equally — balanced</div>
+    </div>
+
+  </div>
+
+  <p class="prose">This is what double-entry bookkeeping enforces. Every recording touches at least two accounts, and the two sides must remain equal. The system cannot get out of balance unless someone makes an error — or deliberately circumvents it. And when an error does occur, the imbalance itself is a signal. It tells you something is wrong before you know what went wrong.</p>
+
+  <p class="prose">The identity also creates a reconciliation discipline. At any date, you should be able to add up everything on the left side (assets) and everything on the right side (liabilities plus equities) and get the same number. If they do not match, something was recorded incorrectly. This is not a trivial feature. It is a powerful auditing tool — not because it catches every error (it does not), but because it catches a wide class of them automatically.</p>
+
+  <div class="reconcile-visual">
+    <div class="reconcile-card ok">
+      <div class="reconcile-card-header">✓ In balance</div>
+      <div class="reconcile-body">
+        <div class="reconcile-side">
+          <div class="reconcile-side-label">Left side</div>
+          <div class="reconcile-item">Assets <span>$150,000</span></div>
+          <div class="reconcile-total">Total <span>$150,000</span></div>
+        </div>
+        <div class="reconcile-op">=</div>
+        <div class="reconcile-side">
+          <div class="reconcile-side-label">Right side</div>
+          <div class="reconcile-item">Liabilities <span>$56,000</span></div>
+          <div class="reconcile-item">Equities <span>$94,000</span></div>
+          <div class="reconcile-total">Total <span>$150,000</span></div>
+        </div>
+      </div>
+      <div class="reconcile-verdict">Numbers match — no error detected</div>
+    </div>
+
+    <div class="reconcile-card err">
+      <div class="reconcile-card-header">✗ Out of balance</div>
+      <div class="reconcile-body">
+        <div class="reconcile-side">
+          <div class="reconcile-side-label">Left side</div>
+          <div class="reconcile-item">Assets <span>$150,000</span></div>
+          <div class="reconcile-total">Total <span>$150,000</span></div>
+        </div>
+        <div class="reconcile-op">≠</div>
+        <div class="reconcile-side">
+          <div class="reconcile-side-label">Right side</div>
+          <div class="reconcile-item">Liabilities <span>$56,000</span></div>
+          <div class="reconcile-item">Equities <span>$80,000</span></div>
+          <div class="reconcile-total">Total <span class="mismatch">$136,000</span></div>
+        </div>
+      </div>
+      <div class="reconcile-verdict">Numbers don't match — recording error detected</div>
+    </div>
+  </div>
+
+  <div class="rabbit-hole" id="rh1">
+    <button class="rabbit-hole-trigger" onclick="document.getElementById('rh1').classList.toggle('open')">
+      <span class="rh-icon">🐇</span>
+      A remarkably durable design choice
+      <span class="rh-chevron">▶</span>
+    </button>
+    <div class="rabbit-hole-body">
+      <p>The accounting identity is not a law of economics or a theorem derived from first principles. It is a design choice — one that could have been made differently. And yet it has survived, essentially unchanged, for over five hundred years.</p>
+      <p>Luca Pacioli described double-entry bookkeeping in 1494, but the practice was already old by then. Venetian merchants had been using it for at least a century. The system they developed imposed a self-balancing constraint on every ledger, and that constraint turned out to be extraordinarily useful: it caught errors, enforced completeness, and created a structure that could be audited by someone who had not been present for the original transactions. These are not minor conveniences. They are the properties that allowed accounting systems to scale from a single merchant's notebook to the global financial reporting infrastructure we have today.</p>
+      <p>The durability of this design choice is worth pausing on. The world of commerce has been transformed many times over since the fifteenth century. The transactions a modern corporation records — derivatives, lease obligations, stock-based compensation — would be unrecognizable to a Venetian trader. And yet the structural constraint at the center of the system is the same: assets equal liabilities plus equities, and every entry must preserve that balance. The identity is not fragile. It is one of the most resilient design choices in the history of information systems.</p>
+    </div>
+  </div>
+
+
+</div><!-- /activity-content -->
+
+<script src="../shared.js"></script>
+<script>
+</script>
+<script>
+(function () {
+  const ALL_ITEMS = [
+    { id: 'c1',  label: 'Cash in the bank',                                      sub: 'Right to acquire other things',              s1: 'recognized', s2: 'assets'  },
+    { id: 'c2',  label: 'A factory the company owns',                            sub: 'Right to use, rent, or sell it',             s1: 'recognized', s2: 'assets'  },
+    { id: 'c3',  label: 'Receivable from a customer',                            sub: 'Right to collect future cash',               s1: 'recognized', s2: 'assets'  },
+    { id: 'c4',  label: 'A bank loan',                                           sub: 'Obligated to repay',                         s1: 'recognized', s2: 'liab'    },
+    { id: 'c5',  label: 'Wages earned but not yet paid',                         sub: 'Employees are owed this',                    s1: 'recognized', s2: 'liab'    },
+    { id: 'c6',  label: 'Goods received, not yet paid for',                      sub: 'Accounts payable',                           s1: 'recognized', s2: 'liab'    },
+    { id: 'c7',  label: "Owners' residual claim",                                sub: 'After all obligations are settled',          s1: 'recognized', s2: 'equity'  },
+    { id: 'c8',  label: 'Net assets of a university',                            sub: 'Assets minus liabilities, no shareholders',  s1: 'recognized', s2: 'equity'  },
+    { id: 'c9',  label: 'Signed a contract to supply a major retailer next year', sub: 'No goods delivered yet',        s1: 'press', s2: null,
+      whyNot:  'No goods have been delivered and no cash has changed hands. The company holds no present right to receive payment, and the retailer has no present obligation to pay. The contract is a mutual promise — not yet a completed exchange.',
+      trigger: 'Delivery of the goods — at that point, a receivable (asset) and revenue (equity increase) get recognized.' },
+    { id: 'c10', label: 'Received notice of a potential lawsuit',                sub: 'Nothing formally recorded yet',  s1: 'press', s2: null,
+      whyNot:  'There is no present obligation yet — just a notice. The outcome is uncertain: the company may win, settle for a small amount, or face a large judgment. Until a loss is both probable and estimable, no liability enters the statements.',
+      trigger: 'If a loss becomes probable and can be reasonably estimated — a liability gets recognized. Until then, it\'s disclosed in the footnotes.' },
+  ];
+
+  const RECOGNIZED = ALL_ITEMS.filter(i => i.s1 === 'recognized');
+  const PRESS_ITEMS = ALL_ITEMS.filter(i => i.s1 === 'press');
+
+  let s1Selected = null, s1Placed = 0;
+  let s2Selected = null, s2Placed = 0;
+
+  // ── Card factory ──────────────────────────────────────────────
+  function makeCard(data, stage) {
+    const card = document.createElement('div');
+    card.className = 'dnd-card';
+    card.draggable = true;
+    card.id = stage + '-' + data.id;
+    card.dataset.itemId = data.id;
+    card.dataset.stage = stage;
+    card.innerHTML = '<div>' + data.label + '</div><div class="dnd-card-sub">' + data.sub + '</div>';
+    card.addEventListener('dragstart', e => { card.classList.add('dragging'); e.dataTransfer.setData('text/plain', card.id); });
+    card.addEventListener('dragend', () => card.classList.remove('dragging'));
+    card.addEventListener('click', () => {
+      if (card.dataset.done) return;
+      if (card.dataset.stage === 's1') {
+        if (s1Selected === card) { card.classList.remove('selected'); s1Selected = null; return; }
+        if (s1Selected) s1Selected.classList.remove('selected');
+        s1Selected = card; card.classList.add('selected');
+      } else {
+        if (s2Selected === card) { card.classList.remove('selected'); s2Selected = null; return; }
+        if (s2Selected) s2Selected.classList.remove('selected');
+        s2Selected = card; card.classList.add('selected');
+      }
+    });
+    return card;
+  }
+
+  function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+
+  // ── Stage 1 ───────────────────────────────────────────────────
+  function buildStage1() {
+    s1Selected = null; s1Placed = 0;
+    const bank = document.getElementById('s1Bank');
+    bank.querySelectorAll('.dnd-card').forEach(c => c.remove());
+    document.getElementById('s1-items-recognized').innerHTML = '';
+    document.getElementById('s1-items-press').innerHTML = '';
+    document.getElementById('s1Result').className = 'dnd-result';
+    document.getElementById('s1Buttons').style.display = 'none';
+    updateS1Progress();
+    shuffle(ALL_ITEMS).forEach(d => bank.appendChild(makeCard(d, 's1')));
+  }
+
+  ['s1-zone-recognized', 's1-zone-press'].forEach(zid => {
+    const zone = document.getElementById(zid);
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('over'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('over'));
+    zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('over'); tryPlaceS1(document.getElementById(e.dataTransfer.getData('text/plain')), zone); });
+    zone.addEventListener('click', e => {
+      if (e.target.closest('.placed-chip')) return;
+      if (s1Selected) { tryPlaceS1(s1Selected, zone); s1Selected.classList.remove('selected'); s1Selected = null; }
+    });
+  });
+
+  function tryPlaceS1(card, zone) {
+    if (!card || card.dataset.done) return;
+    const data = ALL_ITEMS.find(i => i.id === card.dataset.itemId);
+    if (data.s1 === zone.dataset.zone) {
+      card.dataset.done = '1'; card.remove();
+
+      const chip = document.createElement('div');
+      chip.className = 'placed-chip' + (zone.dataset.zone === 'press' ? ' press' : '');
+      chip.textContent = data.label;
+      zone.querySelector('.zone-items').appendChild(chip);
+
+      if (zone.dataset.zone === 'press' && data.whyNot) {
+        const block = document.createElement('div');
+        block.className = 'press-explain-block';
+        block.innerHTML =
+          '<div class="press-explain-row why">' +
+            '<div class="press-explain-label">Why not recognized now</div>' +
+            '<div class="press-explain-text">' + data.whyNot + '</div>' +
+          '</div>' +
+          '<div class="press-explain-row when">' +
+            '<div class="press-explain-label">What would trigger recognition</div>' +
+            '<div class="press-explain-text">' + data.trigger + '</div>' +
+          '</div>';
+        zone.querySelector('.zone-items').appendChild(block);
+      }
+
+      s1Placed++; updateS1Progress();
+      if (s1Placed === ALL_ITEMS.length) showS1Result();
+    } else {
+      card.classList.add('wrong');
+      setTimeout(() => card.classList.remove('wrong'), 350);
+    }
+  }
+
+  function updateS1Progress() {
+    document.getElementById('s1ProgressFill').style.width = (s1Placed / ALL_ITEMS.length * 100) + '%';
+    document.getElementById('s1ProgressText').textContent = s1Placed + ' of ' + ALL_ITEMS.length + ' sorted';
+  }
+
+  function showS1Result() {
+    document.getElementById('s1Result').className = 'dnd-result show done';
+    document.getElementById('s1Score').textContent = 'All 10 items sorted correctly!';
+    document.getElementById('s1Msg').textContent =
+      '8 items enter the accounting records. The press release zone explains why the other two don\'t qualify yet — and what it would take for each to eventually be recognized.';
+    document.getElementById('s1Buttons').style.display = 'flex';
+  }
+
+  window.resetStage1 = function () { buildStage1(); };
+
+  // ── Stage 2 ───────────────────────────────────────────────────
+  window.startStage2 = function () {
+    document.getElementById('stage1Activity').style.display = 'none';
+    document.getElementById('stage2Activity').style.display = '';
+    buildStage2();
+  };
+
+  function buildStage2() {
+    s2Selected = null; s2Placed = 0;
+    const bank = document.getElementById('s2Bank');
+    bank.querySelectorAll('.dnd-card').forEach(c => c.remove());
+    ['assets', 'liab', 'equity'].forEach(z => { document.getElementById('s2-items-' + z).innerHTML = ''; });
+    document.getElementById('s2Result').className = 'dnd-result';
+    document.getElementById('pressReleaseNote').innerHTML =
+      '<strong>Set aside (press release):</strong> ' +
+      PRESS_ITEMS.map(i => '\u201c' + i.label + '\u201d').join(' and ') +
+      ' \u2014 these don\u2019t enter the statements yet.';
+    updateS2Progress();
+    shuffle(RECOGNIZED).forEach(d => bank.appendChild(makeCard(d, 's2')));
+  }
+
+  ['s2-zone-assets', 's2-zone-liab', 's2-zone-equity'].forEach(zid => {
+    const zone = document.getElementById(zid);
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('over'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('over'));
+    zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('over'); tryPlaceS2(document.getElementById(e.dataTransfer.getData('text/plain')), zone); });
+    zone.addEventListener('click', e => {
+      if (e.target.closest('.placed-chip')) return;
+      if (s2Selected) { tryPlaceS2(s2Selected, zone); s2Selected.classList.remove('selected'); s2Selected = null; }
+    });
+  });
+
+  function tryPlaceS2(card, zone) {
+    if (!card || card.dataset.done) return;
+    const data = ALL_ITEMS.find(i => i.id === card.dataset.itemId);
+    if (data.s2 === zone.dataset.zone) {
+      card.dataset.done = '1'; card.remove();
+      const chip = document.createElement('div');
+      chip.className = 'placed-chip';
+      chip.textContent = data.label;
+      zone.querySelector('.zone-items').appendChild(chip);
+      s2Placed++; updateS2Progress();
+      if (s2Placed === RECOGNIZED.length) showS2Result();
+    } else {
+      card.classList.add('wrong');
+      setTimeout(() => card.classList.remove('wrong'), 350);
+    }
+  }
+
+  function updateS2Progress() {
+    document.getElementById('s2ProgressFill').style.width = (s2Placed / RECOGNIZED.length * 100) + '%';
+    document.getElementById('s2ProgressText').textContent = s2Placed + ' of ' + RECOGNIZED.length + ' classified';
+  }
+
+  function showS2Result() {
+    document.getElementById('s2Result').className = 'dnd-result show done';
+    document.getElementById('s2Score').textContent = 'All 8 items correctly classified!';
+    document.getElementById('s2Msg').textContent =
+      'You can distinguish rights (assets) from obligations (liabilities) and understand that equities is the derived difference. And you know that not everything economically important makes it into the statements right away.';
+  }
+
+  window.resetAll = function () {
+    document.getElementById('stage2Activity').style.display = 'none';
+    document.getElementById('stage1Activity').style.display = '';
+    buildStage1();
+  };
+
+  // ── Init ──────────────────────────────────────────────────────
+  buildStage1();
+})();
+</script>
+</body>
+</html>

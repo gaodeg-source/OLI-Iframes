@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="color-scheme" content="light dark">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Three Flow Statements</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared.css">
+</head>
+<body>
+<div class="page">
+
+  <!-- ============================================================
+       OPENING TEXT
+  ============================================================ -->
+  <div class="text-block">
+    <p class="prose">The third move is to build output channels that explain why the two snapshots differ. What happened between December 31, 2024, and December 31, 2025, that changed the entity's financial position?</p>
+      <p class="prose"><strong>The system answers this by decomposing the change in equities — the residual — into categories.</strong> Equities can change for several reasons, and each reason tells a different part of the story.</p>
+  </div>
+
+  <!-- ============================================================
+       OPERATIONS + CASH TEXT
+  ============================================================ -->
+  <div class="text-block">
+    <p class="subsection-head">Operations</p>
+    <p class="prose">The entity earned revenues and incurred expenses. Revenues are the gross inflows of worth resulting from the entity's activities — selling goods, providing services, earning fees. Expenses are the gross outflows — the resources consumed in generating those revenues. <strong>If revenues exceeded expenses, operations increased equities. If expenses exceeded revenues, operations decreased equities.</strong></p>
+    <p class="prose"><strong>The income statement reports this: what came in from operations, what went out, and what the difference was over the period.</strong> This is the channel that most people think of first when they ask "how did the entity do this year?" It is the system's attempt to show whether the entity created or consumed worth through its activities.</p>
+    <p class="subsection-head">Cash</p>
+    <p class="prose"><strong>Operations as reported on the income statement do not necessarily move in lockstep with cash.</strong> A company can record a sale (revenue) before it collects the cash — the customer owes the money but has not paid yet. It can incur an expense (like depreciation) that involves no cash movement at all. Revenue and expense are conventions for recognizing worth created and consumed. Cash is a fact about what actually moved.</p>
+  </div>
+
+  <!-- ============================================================
+       CASH FLOWS + OWNER TRANSACTIONS TEXT
+  ============================================================ -->
+  <div class="text-block">
+    <p class="prose"><strong>The statement of cash flows tracks the actual cash that moved in and out during the period.</strong> It typically groups these movements into three categories: cash from operating activities, cash used for investing (buying or selling long-term assets), and cash from financing (borrowing, repaying debt, transactions with owners). Under the indirect method — the most common approach — it begins with the income statement's bottom line and adjusts for everything that affected reported income but not cash, and everything that affected cash but not reported income. It is, in effect, a reconciliation: here is what the income statement said happened, and here is what actually happened in cash.</p>
+      <p class="prose"><strong>Not all changes in equities come from operations or cash movements.</strong> Owners may invest additional capital (increasing equities) or receive distributions — dividends — (decreasing equities). There may be gains or losses that bypass the income statement under certain conventions. <strong>The statement of changes in equities tracks all of this: it starts with opening equities, accounts for every category of change, and arrives at closing equities.</strong> It is the full bridge from one balance sheet to the next. (In a not-for-profit, a statement of activities and changes in net assets serves a comparable role — the architecture is the same, as we saw in Section 1.)</p>
+  </div>
+
+  <!-- ============================================================
+       ACTIVITY — WHICH STATEMENT IS IT?
+  ============================================================ -->
+  <div class="section-card activity-card">
+<div class="activity-title">Which Statement Is It?</div>
+    <div class="activity-desc">You have now seen all three flow statements and what each one tracks. For each item below, select the statement it belongs to, then click <strong>Check</strong>. The last question may have more than one correct answer.</div>
+    <div class="match-list" id="matchList"></div>
+    <div class="act-footer">
+      <span class="act-progress" id="actProgress">0 of 6 answered</span>
+      <button class="btn btn-outline" onclick="resetMatch()">Reset</button>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+var OPTS = ['Income Statement', 'Statement of Cash Flows', 'Statement of Changes in Equities'];
+
+var ITEMS = [
+  {
+    type: 'single', q: 'Profit or loss from operations', correct: 0,
+    hintOk:    'The Income Statement reports revenues and expenses over the period, so it explains whether operations produced a profit or a loss.',
+    hintWrong: 'Not quite — this belongs to the Income Statement, because profit or loss comes from revenues minus expenses over the period.'
+  },
+  {
+    type: 'single', q: 'Actual cash moving in and out', correct: 1,
+    hintOk:    'The Statement of Cash Flows tracks actual cash received and paid during the period, grouped into operating, investing, and financing activities.',
+    hintWrong: 'Not quite — this belongs to the Statement of Cash Flows, because it tracks actual cash inflows and outflows during the period.'
+  },
+  {
+    type: 'single', q: 'Additional capital contributed by owners', correct: 2,
+    hintOk:    'The Statement of Changes in Equities reports owner contributions because they increase equity without being operating income.',
+    hintWrong: 'Not quite — this belongs to the Statement of Changes in Equities, because owner contributions increase equity but are not income.'
+  },
+  {
+    type: 'single', q: 'Revenue earned before cash is collected', correct: 0,
+    hintOk:    'The Income Statement reports revenue when it is earned, even if the cash has not yet been collected.',
+    hintWrong: 'Not quite — this belongs to the Income Statement, because revenue is recognized when earned, not when cash is received.'
+  },
+  {
+    type: 'single', q: 'The full movement from opening equity to closing equity', correct: 2,
+    hintOk:    'The Statement of Changes in Equities provides the full reconciliation from opening equity to closing equity by showing all categories of change during the period.',
+    hintWrong: 'Not quite — this belongs to the Statement of Changes in Equities, because it shows the complete bridge from beginning equity to ending equity.'
+  },
+  {
+    type: 'multi', q: 'Dividends paid to owners',
+    combos: {
+      '010': { status: 'partial', text: 'Partially correct. Dividends paid to owners are reported on the statement of cash flows because they are a cash outflow, usually classified as a financing activity. However, they should also appear on the statement of changes in equities because they reduce owners\' equity.' },
+      '001': { status: 'partial', text: 'Partially correct. Dividends paid to owners are reported on the statement of changes in equities because they decrease equity. However, they should also appear on the statement of cash flows because they involve an actual cash payment.' },
+      '100': { status: 'wrong',   text: 'Incorrect. Dividends are not expenses and do not affect profit, so they are not reported on the income statement. They are instead shown on the statement of cash flows and the statement of changes in equities.' },
+      '110': { status: 'partial', text: 'Partially correct. The statement of cash flows is correct because dividends paid are cash outflows. But the income statement is incorrect because dividends are not treated as expenses; the missing correct statement is the statement of changes in equities.' },
+      '101': { status: 'partial', text: 'Partially correct. The statement of changes in equities is correct because dividends reduce equity. But the income statement is incorrect because dividends are not part of profit or loss; the missing correct statement is the statement of cash flows.' },
+      '011': { status: 'correct', text: 'Correct. Dividends paid to owners appear on the statement of cash flows as a cash outflow and on the statement of changes in equities as a reduction in equity.' },
+      '111': { status: 'partial', text: 'Partially correct. You included the two correct statements, but the income statement should not be selected because dividends are distributions to owners, not expenses.' }
+    }
+  }
+];
+
+/* state[i]: { sel: null (single) or [bool,bool,bool] (multi), checked: bool } */
+var state = ITEMS.map(function(item) {
+  return { sel: item.type === 'multi' ? [false, false, false] : null, checked: false };
+});
+
+function renderMatch() {
+  var list = document.getElementById('matchList');
+  list.innerHTML = '';
+  var answered = 0;
+
+  ITEMS.forEach(function(item, qi) {
+    var s = state[qi];
+    if (s.checked) answered++;
+    var hasSelection = item.type === 'multi'
+      ? s.sel.some(Boolean)
+      : s.sel !== null;
+
+    var row = document.createElement('div');
+    row.className = 'match-row';
+
+    /* prompt */
+    var prompt = document.createElement('div');
+    prompt.className = 'match-prompt';
+    prompt.innerHTML = '<span class="match-num">' + (qi + 1) + '</span>' + item.q;
+
+    /* options */
+    var opts = document.createElement('div');
+    opts.className = 'match-opts';
+    OPTS.forEach(function(opt, oi) {
+      var b = document.createElement('div');
+      b.className = 'match-opt';
+      b.textContent = opt;
+
+      if (s.checked) {
+        b.classList.add('locked');
+        if (item.type === 'single') {
+          if (oi === s.sel && oi === item.correct) b.classList.add('correct');
+          else if (oi === s.sel && oi !== item.correct) b.classList.add('wrong');
+          else if (oi === item.correct) b.classList.add('correct');
+        } else {
+          /* multi: green if selected+correct, red if selected+wrong */
+          var isCorrectOpt = (oi === 1 || oi === 2);
+          if (s.sel[oi] && isCorrectOpt)  b.classList.add('correct');
+          if (s.sel[oi] && !isCorrectOpt) b.classList.add('wrong');
+        }
+      } else {
+        if (item.type === 'single') {
+          if (s.sel === oi) b.classList.add('selected');
+          (function(o){ b.addEventListener('click', function() { s.sel = o; renderMatch(); }); })(oi);
+        } else {
+          if (s.sel[oi]) b.classList.add('selected');
+          (function(o){ b.addEventListener('click', function() { s.sel[o] = !s.sel[o]; renderMatch(); }); })(oi);
+        }
+      }
+      opts.appendChild(b);
+    });
+
+    /* check button */
+    var checkBtn = document.createElement('button');
+    checkBtn.className = 'match-check-btn';
+    checkBtn.textContent = 'Check';
+    checkBtn.disabled = s.checked || !hasSelection;
+    if (!s.checked) {
+      (function(idx){ checkBtn.addEventListener('click', function() { state[idx].checked = true; renderMatch(); }); })(qi);
+    }
+
+    /* feedback */
+    var fb = document.createElement('div');
+    fb.className = 'match-fb';
+    if (s.checked) {
+      fb.classList.add('show');
+      if (item.type === 'single') {
+        var ok = s.sel === item.correct;
+        fb.classList.add(ok ? 'ok' : 'err');
+        fb.textContent = ok ? '✓ ' + item.hintOk : item.hintWrong;
+      } else {
+        var key = (s.sel[0]?'1':'0') + (s.sel[1]?'1':'0') + (s.sel[2]?'1':'0');
+        var combo = item.combos[key] || { status: 'inf', text: 'Please select at least one option.' };
+        fb.classList.add(combo.status === 'correct' ? 'ok' : combo.status === 'partial' ? 'partial' : 'err');
+        fb.textContent = combo.text;
+      }
+    }
+
+    row.appendChild(prompt);
+    row.appendChild(opts);
+    row.appendChild(checkBtn);
+    row.appendChild(fb);
+    list.appendChild(row);
+  });
+
+  var prog = document.getElementById('actProgress');
+  prog.textContent = answered + ' of ' + ITEMS.length + ' answered';
+  if (answered === ITEMS.length) prog.style.color = '#16a34a';
+}
+
+function resetMatch() {
+  state = ITEMS.map(function(item) {
+    return { sel: item.type === 'multi' ? [false, false, false] : null, checked: false };
+  });
+  document.getElementById('actProgress').style.color = '';
+  renderMatch();
+}
+
+renderMatch();
+</script>
+</body>
+</html>

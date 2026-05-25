@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="color-scheme" content="light dark">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Getting Organized</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared.css">
+<style>
+/* ================================================================
+   SCENARIO BLOCK — narrative framing, uses repo color tokens only
+================================================================ */
+.scenario {
+  border-left: 4px solid var(--accent);
+  background: #fffbf5;
+  border-radius: 0 6px 6px 0;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+}
+.scenario p {
+  font-family: 'Open Sans', sans-serif;
+  font-size: var(--font-m);
+  color: #374151;
+  line-height: 1.75;
+  margin: 0;
+  font-style: italic;
+}
+
+/* ================================================================
+   FLIP CARDS — 3-column grid, click to flip
+================================================================ */
+.flip-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin: 20px 0;
+  align-items: stretch;
+}
+@media (max-width: 600px) { .flip-grid { grid-template-columns: 1fr; } }
+.flip-card {
+  perspective: 1000px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  min-height: 220px;
+}
+.flip-card-inner {
+  flex: 1;
+  display: grid;
+  transform-style: preserve-3d;
+  transition: transform 0.5s ease;
+}
+.flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+.flip-card-front,
+.flip-card-back {
+  grid-area: 1 / 1;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 10px;
+  padding: 24px 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+.flip-card-front {
+  background: white;
+  border: 1.5px solid #e2e8f0;
+}
+.flip-card-front h4 {
+  font-family: Inter, sans-serif;
+  font-size: var(--font-m); font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 10px;
+}
+.flip-card-front p {
+  font-family: 'Open Sans', sans-serif;
+  font-size: var(--font-m); color: #444; line-height: 1.65; margin: 0; flex: 1;
+}
+.flip-card-front .flip-hint {
+  font-family: Inter, sans-serif;
+  font-size: 10px; font-weight: 600; color: #aaa;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  margin-top: 10px; text-align: right;
+}
+.flip-card-back {
+  background: var(--primary);
+  transform: rotateY(180deg);
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.flip-card-back p {
+  font-family: Inter, sans-serif;
+  font-size: var(--font-m); font-weight: 600;
+  color: white; line-height: 1.55; margin: 0;
+}
+
+/* ================================================================
+   DRAG-AND-DROP
+================================================================ */
+.dnd-pool {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  min-height: 50px; padding: 12px 14px;
+  background: #f8fafc; border: 1.5px dashed #d1d5db; border-radius: 10px;
+  margin-bottom: 16px;
+}
+.dnd-bins {
+  display: grid;
+  grid-template-columns: 1fr 3px 1fr;
+  align-items: stretch;
+  min-height: 130px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.dnd-bin {
+  padding: 14px;
+  background: #fafafa;
+  display: flex; flex-direction: column; gap: 8px;
+  transition: background 0.15s, border-color 0.15s;
+}
+.dnd-bin.drag-over { background: #eff6ff; }
+.dnd-divider {
+  background: #d1d5db;
+  width: 3px;
+}
+.dnd-bin-label {
+  font-family: Inter, sans-serif;
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.6px;
+  color: #888; margin-bottom: 2px;
+}
+.dnd-bin-chips { display: flex; flex-wrap: wrap; gap: 7px; min-height: 32px; }
+.dnd-chip {
+  display: inline-flex; align-items: center;
+  background: white; border: 1.5px solid #d1d5db; border-radius: 7px;
+  padding: 6px 12px;
+  font-family: Inter, sans-serif; font-size: var(--font-m); font-weight: 500; color: #333;
+  cursor: grab; user-select: none;
+  transition: border-color 0.15s, background 0.15s, opacity 0.15s;
+}
+.dnd-chip:hover { border-color: var(--primary); color: var(--primary); }
+.dnd-chip.dragging { opacity: 0.4; }
+.dnd-chip.correct { border-color: var(--success-border); background: var(--success-bg); color: var(--success-text); cursor: default; }
+.dnd-chip.wrong   { border-color: var(--error-border); background: var(--error-bg); color: var(--error-text); cursor: default; }
+
+/* ================================================================
+   MCQ — adapted from .match-opt pattern in three-flow-statements.html
+================================================================ */
+.mcq-list { display: flex; flex-direction: column; gap: 10px; margin: 16px 0 4px; }
+.mcq-opt {
+  border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 13px 16px;
+  cursor: pointer; background: white; transition: all 0.15s;
+  display: flex; align-items: center; gap: 12px;
+  font-family: Inter, sans-serif; font-size: var(--font-m); color: #333;
+}
+.mcq-opt:hover:not(.locked) { border-color: var(--primary); background: var(--primary-faint); color: var(--primary); }
+.mcq-opt.selected:not(.locked) { border-color: var(--primary); background: var(--primary-faint); color: var(--primary); }
+.mcq-opt.correct  { border-color: var(--success-border) !important; background: var(--success-bg) !important; color: var(--success-text) !important; cursor: default; }
+.mcq-opt.wrong    { border-color: var(--error-border) !important; background: var(--error-bg) !important; color: var(--error-text) !important; cursor: default; }
+.mcq-opt.locked   { cursor: default; }
+.mcq-letter { font-weight: 700; font-size: 14px; flex-shrink: 0; min-width: 18px; }
+.mcq-fb {
+  font-family: 'Open Sans', sans-serif;
+  font-size: var(--font-m); line-height: 1.65; margin-top: 10px; display: none;
+  padding: 10px 14px; border-radius: 6px;
+}
+.mcq-fb.show { display: block; }
+.mcq-fb.ok  { background: var(--success-bg); color: var(--success-text); border: 1px solid var(--success-border); }
+.mcq-fb.inf { background: var(--primary-faint); color: var(--primary); border: 1px solid #bfdbfe; }
+.mcq-fb.err { background: var(--error-bg); color: var(--error-text); border: 1px solid var(--error-border); }
+
+/* ================================================================
+   ACCORDION — pattern from two-snapshots3.html
+================================================================ */
+.accordion { border: 1px solid #e2e8f0; border-radius: 10px; overflow: hidden; }
+.acc-item { border-bottom: 1px solid #e2e8f0; }
+.acc-item:last-child { border-bottom: none; }
+.acc-trigger {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px; cursor: pointer; background: white;
+  transition: background 0.15s; user-select: none; width: 100%; border: none;
+}
+.acc-trigger:hover { background: #f8fafc; }
+.acc-trigger-left { display: flex; align-items: center; gap: 12px; }
+.acc-term { font-family: Inter, sans-serif; font-size: var(--font-m); font-weight: 700; color: var(--primary); }
+.acc-tag  { font-family: Inter, sans-serif; font-size: var(--font-s); color: #888; font-weight: 400; }
+.acc-icon {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 1.5px solid #d1d5db;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: #888; transition: all 0.2s; flex-shrink: 0;
+}
+.acc-trigger[aria-expanded="true"] .acc-icon {
+  background: var(--primary); border-color: var(--primary); color: white; transform: rotate(45deg);
+}
+.acc-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease, padding 0.3s ease; padding: 0 20px; background: #f8fafc; }
+.acc-body.open { max-height: 500px; padding: 16px 20px; }
+.acc-body p { font-family: 'Open Sans', sans-serif; font-size: var(--font-m); color: #333; line-height: 1.75; margin-bottom: 10px; }
+.acc-body p:last-child { margin-bottom: 0; }
+
+/* ================================================================
+   RABBIT HOLE — exact pattern from how-fit-together.html
+================================================================ */
+.rabbit-hole {
+  margin-top: 20px; background: #fffbf5;
+  border: 1px solid #f0dcc8; border-radius: 6px; overflow: hidden;
+}
+.rh-toggle {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%; padding: 14px 18px;
+  background: none; border: none; cursor: pointer;
+  font-family: Inter, sans-serif; font-size: 14px; font-weight: 600;
+  color: var(--accent); text-align: left; transition: background 0.15s;
+}
+.rh-toggle:hover { background: #fff5eb; }
+.rh-icon  { font-size: 16px; flex-shrink: 0; }
+.rh-label { flex: 1; line-height: 1.4; }
+.rh-chevron { margin-left: auto; font-size: 11px; color: #caa; transition: transform 0.2s; }
+.rh-toggle.open .rh-chevron { transform: rotate(180deg); }
+.rh-body { display: none; padding: 0 18px; }
+.rh-body.open { display: block; padding: 0 18px 18px; }
+.rh-body .prose p { font-family: 'Open Sans', sans-serif; font-size: 14px; color: #444; line-height: 1.75; margin-bottom: 14px; }
+.rh-body .prose p:last-child { margin-bottom: 0; }
+
+/* Tighter spacing: post-activity wrap-up through rabbit-hole */
+.close-section { padding: 0 0 8px; }
+.close-section .close-lead {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 1rem; color: #333; line-height: 1.8;
+  margin: 0 0 12px;
+}
+.close-section .callout { margin-top: 0; margin-bottom: 14px; }
+.close-section .section-title { margin-top: 0; margin-bottom: 4px; }
+.close-section .section-sub { margin-bottom: 10px; }
+.close-section + .rabbit-hole { margin-top: 12px; }
+
+@media (prefers-color-scheme: dark) {
+  .scenario { background: #2a2318; border-left-color: var(--accent); }
+  .scenario p { color: #b8afa4; }
+  .flip-card-front { background: #32303c; border-color: #4a4858; }
+  .flip-card-front p { color: #c8ccd8; }
+  .flip-card-front .flip-hint { color: #8a8898; }
+  .dnd-pool { background: #32303c; border-color: #4a4858; }
+  .dnd-bin { background: #2a2838; }
+  .dnd-bin.drag-over { background: #1a2540 !important; }
+  .dnd-divider { background: #4a4858; }
+  .dnd-bin-label { color: #8a8898; }
+  .dnd-chip { background: #3e3c48; border-color: #4a4858; color: #c8ccd8; }
+  .dnd-chip:hover { border-color: var(--primary); color: var(--primary); }
+
+  .mcq-opt { background: #3e3c48; border-color: #4a4858; color: #c8ccd8; }
+  .mcq-fb.inf { background: var(--primary-faint); color: var(--primary); }
+  .accordion { border-color: #2a2830; }
+  .acc-item { border-bottom-color: #2a2830; }
+  .acc-trigger { background: #32303c; }
+  .acc-trigger:hover { background: #3a3846; }
+  .acc-term { color: var(--primary); }
+  .acc-tag { color: #8a8898; }
+  .acc-icon { border-color: #4a4858; color: #b0aec0; }
+  .acc-trigger[aria-expanded="true"] .acc-icon { background: var(--primary); border-color: var(--primary); color: #1b191f; }
+  .acc-body { background: #3e3c48; border-top: 1px solid #4a4858; }
+  .acc-body p { color: #c8ccd8; }
+  .rabbit-hole { background: #2a2318; border-color: #3a2e22; }
+  .rh-toggle { color: #e07840; }
+  .rh-toggle:hover { background: #221a10; }
+  .rh-chevron { color: #6b5540; }
+  .rh-body { color: #b8afa4; }
+  .rh-body .prose p { color: #b8afa4; }
+}
+
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ============================================================
+       OPENING — CONTEXT AND PREVIEW
+  ============================================================ -->
+  <div class="text-block">
+    <div class="section-tag">Module 1 &middot; The Journey</div>
+    <h2 class="section-title">Getting Organized</h2>
+  </div>
+
+  <div class="scenario">
+    <p>Scenario: You run a bicycle repair shop. It has been six months. Tools are scattered, parts are stacked in corners, and you have been keeping most things in your head. It isn&rsquo;t really working anymore. You want to get more systematic about how you run this thing.</p>
+  </div>
+
+  <div class="info-box">
+    <h3>What You&rsquo;ll Discover</h3>
+    <p>&#8594;&ensp;Why getting organized requires writing things down.</p>
+    <p>&#8594;&ensp;That making a list naturally draws a line &mdash; between what&rsquo;s related to your shop work and what isn&rsquo;t.</p>
+    <p>&#8594;&ensp;That you&rsquo;ll need a second list &mdash; for promises, not just things.</p>
+  </div>
+
+  <!-- ============================================================
+       STEP 1 — WHY YOU NEED A LIST
+  ============================================================ -->
+  <div class="text-block">
+    <div class="section-tag">Step 1</div>
+    <h2 class="section-title">Why you need to write things down</h2>
+    <p class="section-sub">Three things happened this week. None of them went smoothly.</p>
+    <div class="flip-grid">
+
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <h4>A customer asks</h4>
+            <p>A customer walks in with a broken derailleur. &ldquo;Do you have a 24mm wrench? I left mine at home.&rdquo; You think you do &mdash; somewhere in that toolbox under the bench, or maybe in the drawer. You start digging.</p>
+            <div class="flip-hint">Click to flip &rarr;</div>
+          </div>
+          <div class="flip-card-back">
+            <p>You want to find things easily and quickly.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <h4>It&rsquo;s not all in your head anymore</h4>
+            <p>Tonight you unwrapped a fork crown race tool you bought last week &mdash; and found another one already in the drawer, still in its package. Third time this month you&rsquo;ve reordered something you already had.</p>
+            <div class="flip-hint">Click to flip &rarr;</div>
+          </div>
+          <div class="flip-card-back">
+            <p>You want to be more systematic.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-card" onclick="this.classList.toggle('flipped')">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <h4>What if something happened?</h4>
+            <p>A fire two blocks over last night gets you thinking: you should have insurance, and you don&rsquo;t really know what&rsquo;s at risk. The repair stand, the parts, all the tools &mdash; it&rsquo;s a lot.</p>
+            <div class="flip-hint">Click to flip &rarr;</div>
+          </div>
+          <div class="flip-card-back">
+            <p>You need to know what you are protecting to buy a sensible policy.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="callout">
+      <strong>Three different moments, the same realization:</strong> To get things organized, it&rsquo;s time to write things down and create a list.
+    </div>
+  </div>
+
+  <!-- ============================================================
+       ACTIVITY 1 — What should be on the list?
+  ============================================================ -->
+  <div class="section-card activity-card">
+    <div class="activity-tag">&#10003; Activity 1</div>
+    <div class="activity-title">What should be on the list?</div>
+    <div class="activity-desc">Drag each item into the correct bin — <strong>Shop</strong> if it is related to your shop work, or <strong>Personal</strong> if it belongs to the rest of your life.</div>
+    <div class="dnd-pool" id="dndPool"
+         ondragover="dndOver(event,this)" ondragleave="dndLeave(this)" ondrop="dndDropPool(event)"></div>
+    <div class="dnd-bins">
+      <div class="dnd-bin" id="binShop" data-bin="a"
+           ondragover="dndOver(event,this)" ondragleave="dndLeave(this)" ondrop="dndDrop(event,this)">
+        <div class="dnd-bin-label">Shop</div>
+        <div class="dnd-bin-chips" id="binShopChips"></div>
+      </div>
+      <div class="dnd-divider"></div>
+      <div class="dnd-bin" id="binPersonal" data-bin="b"
+           ondragover="dndOver(event,this)" ondragleave="dndLeave(this)" ondrop="dndDrop(event,this)">
+        <div class="dnd-bin-label">Personal</div>
+        <div class="dnd-bin-chips" id="binPersonalChips"></div>
+      </div>
+    </div>
+    <div class="act-footer">
+      <span class="act-progress" id="act1Progress">0 of 7 placed</span>
+      <button class="btn btn-outline" onclick="resetDnd()">Reset</button>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       REFLECTION + MCQ
+  ============================================================ -->
+  <div class="text-block">
+    <div class="prose">
+      <p>Look at what you just did. The tennis racket ended up off the list &mdash; and the cash drawer ended up on it. You drew a line. Some things belong to your shop work; others belong to the rest of your life. That line has a name.</p>
+    </div>
+  </div>
+
+  <div class="section-card activity-card">
+    <div class="activity-tag">&#10003; Activity 2</div>
+    <div class="activity-title">What best describes the list you kept?</div>
+    <div class="activity-desc">Which of the following best describes what ended up on your shop list?</div>
+    <div class="mcq-list" id="mcq1"></div>
+    <div class="mcq-fb" id="mcq1-fb"></div>
+    <div class="act-footer" id="mcq1Footer" style="display:none">
+      <span></span>
+      <button class="btn btn-outline" onclick="resetMCQ()">Reset</button>
+    </div>
+  </div>
+
+
+  <div class="text-block">
+    <div class="prose">
+      <p>The line you drew is called the <strong>entity boundary</strong>. It decides what goes into the accounting records and what stays out. Every time an accountant records something, they have already made a judgment: does this belong to the entity (the shop) or not?</p>
+      <p>The boundary isn&rsquo;t always obvious. If you use your personal car to pick up parts for the shop, did the car cross the boundary for that trip? Accounting systems handle this with rules &mdash; but those rules are built on top of the same idea you just discovered by sorting ten things into two bins.</p>
+
+    </div>
+  </div>
+
+  <div class="rabbit-hole">
+    <button class="rh-toggle" id="rh1Toggle" onclick="toggleRh('rh1')">
+      <span class="rh-icon">&#128007;</span>
+      <span class="rh-label">Notice what isn&rsquo;t on the list.</span>
+      <span class="rh-chevron">&#9660;</span>
+    </button>
+    <div class="rh-body" id="rh1Body">
+      <div class="prose">
+        <p>Look at the list you made. The stand, the wrenches, the parts &mdash; all things related to your shop work. But none of it becomes shop work without <em>you</em>. You know how to true a wheel, when a frame is worth fixing, which wrench to grab. Your knowledge is what makes the shop possible.</p>
+        <p>Should you list it? It&rsquo;s arguably the most important &ldquo;thing&rdquo; about the shop. But it isn&rsquo;t a thing you can drag into a bin &mdash; and you, the person who has it, aren&rsquo;t a thing at all. Where do you and what you know fit in the picture? We&rsquo;ll come back to that question later.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       STEP 2 — THINGS AREN'T ENOUGH
+  ============================================================ -->
+  <div class="text-block">
+    <div class="section-tag">Step 2</div>
+    <h2 class="section-title">Things aren&rsquo;t enough &mdash; you also need promises</h2>
+    <div class="prose">
+      <p>You&rsquo;ve listed what you have. But there&rsquo;s something the list of things doesn&rsquo;t capture. </p>
+    </div>
+  </div>
+
+  <div class="scenario">
+    <p>Scenario: Last month, a <strong>customer</strong> paid a <strong>deposit</strong> for a custom build that isn&rsquo;t finished yet. Your parts <strong>supplier</strong> sent a <strong>bill</strong> you haven&rsquo;t paid. The <strong>landlord</strong> expects <strong>rent</strong> at the end of the week. </p>
+  </div>
+
+  <div class="text-block">
+    <div class="prose">
+      <p>These aren&rsquo;t things &mdash; they&rsquo;re <strong>promises</strong>. You owe something. A complete picture of your shop has two sides: what you <em>have</em>, and what you <em>owe</em>. </p>
+      <p>A shop that has $5,000 worth of equipment but owes $8,000 to suppliers is in a very different position than one that holds the same equipment free and clear. If you only track things, you are missing half the picture.</p>
+    </div>
+    <div class="accordion" style="margin-top: 18px;">
+      <div class="acc-item">
+        <button class="acc-trigger" onclick="toggleAcc(this)" aria-expanded="false">
+          <div class="acc-trigger-left">
+            <span class="acc-term">Promise</span>
+            <span class="acc-tag">&mdash; something owed, paid later</span>
+          </div>
+          <div class="acc-icon">+</div>
+        </button>
+        <div class="acc-body">
+          <p>Something you have agreed to do or pay, where the doing or paying comes later.</p>
+        </div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-trigger" onclick="toggleAcc(this)" aria-expanded="false">
+          <div class="acc-trigger-left">
+            <span class="acc-term">Bill</span>
+            <span class="acc-tag">&mdash; a statement of money you owe</span>
+          </div>
+          <div class="acc-icon">+</div>
+        </button>
+        <div class="acc-body">
+          <p>A statement of money you owe to someone.</p>
+        </div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-trigger" onclick="toggleAcc(this)" aria-expanded="false">
+          <div class="acc-trigger-left">
+            <span class="acc-term">Deposit</span>
+            <span class="acc-tag">&mdash; money paid in advance</span>
+          </div>
+          <div class="acc-icon">+</div>
+        </button>
+        <div class="acc-body">
+          <p>Money paid in advance for something you will receive or have done.</p>
+        </div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-trigger" onclick="toggleAcc(this)" aria-expanded="false">
+          <div class="acc-trigger-left">
+            <span class="acc-term">Customer</span>
+            <span class="acc-tag">&mdash; someone who pays you</span>
+          </div>
+          <div class="acc-icon">+</div>
+        </button>
+        <div class="acc-body">
+          <p>Someone who pays you for goods or services.</p>
+        </div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-trigger" onclick="toggleAcc(this)" aria-expanded="false">
+          <div class="acc-trigger-left">
+            <span class="acc-term">Supplier</span>
+            <span class="acc-tag">&mdash; a business you buy from</span>
+          </div>
+          <div class="acc-icon">+</div>
+        </button>
+        <div class="acc-body">
+          <p>A business you buy from.</p>
+        </div>
+      </div>
+    </div>
+    <div class="callout">
+      Just like what we did to things, <strong>promises related to your shop work</strong> should be on the second list. Promises related to the rest of your life, like the $300 membership fee you owe to the golf club, or the $80 charges to your credit card for a family dinner, should be left off.
+    </div>
+  </div>
+
+  <!-- ============================================================
+       ACTIVITY 3 — HAVE vs. OWE
+  ============================================================ -->
+  <div class="section-card activity-card">
+    <div class="activity-tag">&#10003; Activity 3</div>
+    <div class="activity-title">Things I Have vs. Things I Owe</div>
+    <div class="activity-desc">Drag each item into the correct bin &mdash; <strong>I have it</strong> if it is something you possess, or <strong>I owe it</strong> if it is a promise you still need to fulfill.</div>
+    <div class="dnd-pool" id="dndPool2"
+         ondragover="dndOver(event,this)" ondragleave="dndLeave(this)" ondrop="dndDropPool2(event)"></div>
+    <div class="dnd-bins">
+      <div class="dnd-bin" id="binHave" data-bin="a"
+           ondragover="dndOver(event,this)" ondragleave="dndLeave(this)" ondrop="dndDrop2(event,this)">
+        <div class="dnd-bin-label">&#10003; I have it</div>
+        <div class="dnd-bin-chips" id="binHaveChips"></div>
+      </div>
+      <div class="dnd-divider"></div>
+      <div class="dnd-bin" id="binOwe" data-bin="b"
+           ondragover="dndOver(event,this)" ondragleave="dndLeave(this)" ondrop="dndDrop2(event,this)">
+        <div class="dnd-bin-label">&#9888; I owe it</div>
+        <div class="dnd-bin-chips" id="binOweChips"></div>
+      </div>
+    </div>
+    <div class="act-footer">
+      <span class="act-progress" id="act3Progress">0 of 6 placed</span>
+      <button class="btn btn-outline" onclick="resetDnd2()">Reset</button>
+    </div>
+  </div>
+
+  <div class="close-section">
+
+    <div class="callout">
+      <strong>Two lists. One complete picture.</strong> Every accounting system &mdash; from a small repair shop to a global corporation &mdash; is built on these two lists: what the entity <em>has</em>, and what it <em>owes</em>. You just built the foundation of a balance sheet.
+    </div>
+
+    <h2 class="section-title">Assets and Liabilities</h2>
+    <p class="section-sub">The accountant&rsquo;s names for the two lists you just built.</p>
+    <div class="accordion">
+      <div class="acc-item">
+        <button class="acc-trigger" onclick="toggleAcc(this)" aria-expanded="false">
+          <div class="acc-trigger-left">
+            <span class="acc-term">Assets</span>
+            <span class="acc-tag">&mdash; what the entity has</span>
+          </div>
+          <div class="acc-icon">+</div>
+        </button>
+        <div class="acc-body">
+          <p>Assets are the economic resources an entity controls &mdash; the &ldquo;I have it&rdquo; side of the picture. In your repair shop, that includes cash in the drawer, tools like your set of wrenches, and equipment like the bicycle repair stand. These are things the shop can use, sell, or collect value from.</p>
+          <p>Not everything valuable to the shop counts as an asset in accounting. Your skill at truing a wheel matters enormously, but it isn&rsquo;t something you can list on a balance sheet the way you can list a repair stand. Assets are the resources the <em>entity</em> holds, not everything the owner knows or can do.</p>
+        </div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-trigger" onclick="toggleAcc(this)" aria-expanded="false">
+          <div class="acc-trigger-left">
+            <span class="acc-term">Liabilities</span>
+            <span class="acc-tag">&mdash; what the entity owes</span>
+          </div>
+          <div class="acc-icon">+</div>
+        </button>
+        <div class="acc-body">
+          <p>Liabilities are the entity&rsquo;s obligations &mdash; the &ldquo;I owe it&rdquo; side of the picture. An unpaid invoice from your parts supplier, a customer deposit for work you haven&rsquo;t finished yet, and rent due at the end of the month are all liabilities. You may already have the cash or the parts, but you still owe someone something in return.</p>
+          <p>Some liabilities are straightforward promises to pay money later. Others are promises to deliver goods or services &mdash; like the custom build you owe a customer who paid a deposit. Either way, a liability means the entity has taken on an obligation that must eventually be settled.</p>
+        </div>
+      </div>
+    </div>
+  </div><!-- /close-section -->
+
+  <div class="rabbit-hole">
+    <button class="rh-toggle" id="rh2Toggle" onclick="toggleRh('rh2')">
+      <span class="rh-icon">&#128007;</span>
+      <span class="rh-label">What happens when what you have is worth less than what you owe?</span>
+      <span class="rh-chevron">&#9660;</span>
+    </button>
+    <div class="rh-body" id="rh2Body">
+      <div class="prose">
+        <p>When an entity owes more than it has, the difference is called <strong>negative equity</strong> &mdash; or, informally, being &ldquo;underwater.&rdquo; This doesn&rsquo;t necessarily mean the business will fail immediately, but it is a warning sign that the entity&rsquo;s resources are not sufficient to cover its obligations.</p>
+        <p>Understanding this gap is one of the core reasons financial statements exist. A lender, a partner, or a potential buyer all want to know the same thing: does this entity have more than it owes &mdash; and by how much? The two lists you just made are the beginning of that answer.</p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+/* ================================================================
+   ACTIVITY 1 — SORT GRID: SHOP OR PERSONAL?
+   Pattern: two-snapshots1.html renderSort() approach
+================================================================ */
+/* ================================================================
+   ACTIVITY 1 — DRAG AND DROP
+================================================================ */
+var ITEMS_1 = [
+  { id: 'i0', text: 'Set of wrenches',         label: 'a' },
+  { id: 'i1', text: 'Family car',              label: 'b' },
+  { id: 'i2', text: 'The shop space you rent', label: 'a' },
+  { id: 'i3', text: 'Tennis racket',           label: 'b' },
+  { id: 'i4', text: 'Bicycle repair stand',    label: 'a' },
+  { id: 'i5', text: 'Guitar',                  label: 'b' },
+  { id: 'i6', text: 'Cash drawer',             label: 'a' }
+];
+
+var dndDragging = null;
+
+function makeChip(item, locked) {
+  var chip = document.createElement('div');
+  chip.className = 'dnd-chip';
+  chip.id = 'chip-' + item.id;
+  chip.textContent = item.text;
+  chip.setAttribute('data-label', item.label);
+  if (!locked) {
+    chip.draggable = true;
+    chip.addEventListener('dragstart', function(e) {
+      dndDragging = chip;
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', item.id);
+      setTimeout(function() { chip.classList.add('dragging'); }, 0);
+    });
+    chip.addEventListener('dragend', function() {
+      chip.classList.remove('dragging');
+      dndDragging = null;
+    });
+  }
+  return chip;
+}
+
+function buildPool() {
+  var pool = document.getElementById('dndPool');
+  ITEMS_1.forEach(function(item) {
+    pool.appendChild(makeChip(item, false));
+  });
+}
+
+function dndOver(e, el) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  el.classList.add('drag-over');
+}
+function dndLeave(el) { el.classList.remove('drag-over'); }
+
+function dndDrop(e, bin) {
+  e.preventDefault();
+  bin.classList.remove('drag-over');
+  if (!dndDragging) return;
+  var chipLabel = dndDragging.getAttribute('data-label');
+  var binLabel  = bin.getAttribute('data-bin');
+  var isCorrect = chipLabel === binLabel;
+  bin.querySelector('.dnd-bin-chips').appendChild(dndDragging);
+  dndDragging.classList.add(isCorrect ? 'correct' : 'wrong');
+  dndDragging.draggable = false;
+  dndDragging.removeEventListener('dragstart', function(){});
+  updateAct1Progress();
+}
+
+function dndDropPool(e) {
+  e.preventDefault();
+  document.getElementById('dndPool').classList.remove('drag-over');
+}
+
+function updateAct1Progress() {
+  var placed = document.querySelectorAll('#binShopChips .dnd-chip, #binPersonalChips .dnd-chip').length;
+  var prog = document.getElementById('act1Progress');
+  prog.textContent = placed + ' of ' + ITEMS_1.length + ' placed';
+  if (placed === ITEMS_1.length) prog.style.color = '#16a34a';
+}
+
+function resetDnd() {
+  document.getElementById('dndPool').innerHTML = '';
+  document.getElementById('binShopChips').innerHTML = '';
+  document.getElementById('binPersonalChips').innerHTML = '';
+  var prog = document.getElementById('act1Progress');
+  prog.textContent = '0 of ' + ITEMS_1.length + ' placed';
+  prog.style.color = '';
+  buildPool();
+}
+
+buildPool();
+
+
+/* ================================================================
+   ACTIVITY 2 — MCQ
+   Pattern: .match-opt from three-flow-statements.html, single-select
+================================================================ */
+var MCQ_ITEMS = [
+  { letter: 'A', text: 'Things related to your shop work',           correct: true,  fb: 'Exactly right. The line you drew separates things <em>related to your shop work</em> from everything else. This is the entity boundary &mdash; one of the most fundamental ideas in accounting.' },
+  { letter: 'B', text: 'Things you use for repairing bicycles',      correct: false, fb: 'Close, but not quite. The repair stand is on the list even though it doesn&rsquo;t directly touch a bicycle &mdash; it supports the work. The criterion is broader: <em>related to your shop work</em>, not just physically used in repairs.' },
+  { letter: 'C', text: 'Things physically located inside the shop',   correct: false, fb: 'Not quite. The shop space you rent ended up on the list &mdash; but you don&rsquo;t store the building inside the shop. The criterion isn&rsquo;t location; it&rsquo;s whether something is <em>related to your shop work</em>.' },
+  { letter: 'D', text: 'Things the shop legally owns',                correct: false, fb: 'Not quite. The rented shop space ended up on your list, even though you don&rsquo;t own it. The criterion isn&rsquo;t ownership; it&rsquo;s whether something is <em>related to your shop work</em>.' }
+];
+var mcq1Locked = false;
+
+function renderMCQ() {
+  var list = document.getElementById('mcq1');
+  list.innerHTML = '';
+  MCQ_ITEMS.forEach(function(item, i) {
+    var el = document.createElement('div');
+    el.className = 'mcq-opt';
+    if (mcq1Locked) el.classList.add('locked');
+    el.innerHTML = '<span class="mcq-letter">' + item.letter + '.</span> ' + item.text;
+    if (!mcq1Locked) {
+      (function(idx){ el.addEventListener('click', function() {
+        if (mcq1Locked) return;
+        mcq1Locked = true;
+        var opts = document.querySelectorAll('#mcq1 .mcq-opt');
+        opts.forEach(function(o) { o.classList.add('locked'); });
+        opts[idx].classList.add(MCQ_ITEMS[idx].correct ? 'correct' : 'wrong');
+        if (MCQ_ITEMS[idx].correct) {
+          /* also mark wrong options dimmed — just lock them */
+        }
+        var fb = document.getElementById('mcq1-fb');
+        fb.innerHTML = (MCQ_ITEMS[idx].correct ? '&#10003; ' : '') + MCQ_ITEMS[idx].fb;
+        fb.className = 'mcq-fb show ' + (MCQ_ITEMS[idx].correct ? 'ok' : 'err');
+        document.getElementById('mcq1Footer').style.display = '';
+      }); })(i);
+    }
+    list.appendChild(el);
+  });
+}
+
+function resetMCQ() {
+  mcq1Locked = false;
+  document.getElementById('mcq1-fb').className = 'mcq-fb';
+  document.getElementById('mcq1-fb').innerHTML = '';
+  document.getElementById('mcq1Footer').style.display = 'none';
+  renderMCQ();
+}
+
+renderMCQ();
+
+
+/* ================================================================
+   ACTIVITY 3 — DRAG AND DROP: HAVE VS. OWE
+================================================================ */
+var ITEMS_2 = [
+  { id: 'j0', text: 'Cash in the drawer',                       label: 'a' },
+  { id: 'j1', text: 'Unpaid invoice from your parts supplier',  label: 'b' },
+  { id: 'j2', text: 'Set of wrenches',                          label: 'a' },
+  { id: 'j3', text: 'Customer deposit for an unfinished build', label: 'b' },
+  { id: 'j4', text: 'Bicycle repair stand',                     label: 'a' },
+  { id: 'j5', text: 'Rent due at the end of the month',         label: 'b' }
+];
+
+function buildPool2() {
+  var pool = document.getElementById('dndPool2');
+  ITEMS_2.forEach(function(item) {
+    pool.appendChild(makeChip(item, false));
+  });
+}
+
+function dndDrop2(e, bin) {
+  e.preventDefault();
+  bin.classList.remove('drag-over');
+  if (!dndDragging) return;
+  var chipLabel = dndDragging.getAttribute('data-label');
+  var binLabel  = bin.getAttribute('data-bin');
+  var isCorrect = chipLabel === binLabel;
+  bin.querySelector('.dnd-bin-chips').appendChild(dndDragging);
+  dndDragging.classList.add(isCorrect ? 'correct' : 'wrong');
+  dndDragging.draggable = false;
+  updateAct3Progress();
+}
+
+function dndDropPool2(e) {
+  e.preventDefault();
+  document.getElementById('dndPool2').classList.remove('drag-over');
+}
+
+function updateAct3Progress() {
+  var placed = document.querySelectorAll('#binHaveChips .dnd-chip, #binOweChips .dnd-chip').length;
+  var prog = document.getElementById('act3Progress');
+  prog.textContent = placed + ' of ' + ITEMS_2.length + ' placed';
+  if (placed === ITEMS_2.length) prog.style.color = '#16a34a';
+}
+
+function resetDnd2() {
+  document.getElementById('dndPool2').innerHTML = '';
+  document.getElementById('binHaveChips').innerHTML = '';
+  document.getElementById('binOweChips').innerHTML = '';
+  var prog = document.getElementById('act3Progress');
+  prog.textContent = '0 of ' + ITEMS_2.length + ' placed';
+  prog.style.color = '';
+  buildPool2();
+}
+
+buildPool2();
+
+
+/* ================================================================
+   ACCORDION — pattern from two-snapshots3.html
+================================================================ */
+function toggleAcc(trigger) {
+  var isOpen = trigger.getAttribute('aria-expanded') === 'true';
+  var body = trigger.nextElementSibling;
+  trigger.setAttribute('aria-expanded', !isOpen);
+  body.classList.toggle('open', !isOpen);
+}
+
+
+/* ================================================================
+   RABBIT HOLES — exact pattern from how-fit-together.html
+================================================================ */
+function toggleRh(id) {
+  var toggle = document.getElementById(id + 'Toggle');
+  var body   = document.getElementById(id + 'Body');
+  var open   = body.classList.contains('open');
+  body.classList.toggle('open', !open);
+  toggle.classList.toggle('open', !open);
+}
+</script>
+</body>
+</html>
